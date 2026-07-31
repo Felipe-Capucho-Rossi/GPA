@@ -537,18 +537,23 @@ img,svg{max-width:100%}
 <aside class="sidebar" id="sb">
   <div class="sb-logo"><span style="font-weight:800;font-size:15px;color:#fff;">GPA · Fastlog</span></div>
   <nav class="sb-nav">
-    <div class="sb-sec">Operação</div>
-    <div class="sb-item active" id="nav-kpi" data-target="sec-kpi">
+    <div class="sb-sec">Produção</div>
+    <div class="sb-item active" id="nav-operacional" data-target="sec-operacional">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+      <span class="sb-item-txt">Resultado Operacional</span>
+    </div>
+    <div class="sb-item" id="nav-dimensionamento" data-target="sec-dimensionamento">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h12M3 18h8"/><rect x="15" y="10" width="6" height="10" rx="1" fill="currentColor" opacity=".3"/><rect x="19" y="6" width="2" height="14" rx="1" fill="currentColor" opacity=".5"/></svg>
+      <span class="sb-item-txt">Dimensionamento</span>
+    </div>
+    <div class="sb-sec">Presença &amp; Absenteísmo</div>
+    <div class="sb-item" id="nav-kpi" data-target="sec-kpi">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       <span class="sb-item-txt">Visão Geral</span>
     </div>
     <div class="sb-item" id="nav-grade" data-target="sec-grade">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
       <span class="sb-item-txt">Grade Diária</span>
-    </div>
-    <div class="sb-item" id="nav-dimensionamento" data-target="sec-dimensionamento">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h12M3 18h8"/><rect x="15" y="10" width="6" height="10" rx="1" fill="currentColor" opacity=".3"/><rect x="19" y="6" width="2" height="14" rx="1" fill="currentColor" opacity=".5"/></svg>
-      <span class="sb-item-txt">Dimensionamento</span>
     </div>
     <div class="sb-item" id="nav-graficos" data-target="sec-graficos">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
@@ -558,7 +563,6 @@ img,svg{max-width:100%}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
       <span class="sb-item-txt">Evolução</span>
     </div>
-    <div class="sb-sec">Controle</div>
     <div class="sb-item" id="nav-presenca" data-target="sec-presenca">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
       <span class="sb-item-txt">Presença Diária</span>
@@ -599,6 +603,57 @@ img,svg{max-width:100%}
   </div>
 
   <div class="content">
+
+    <!-- RESULTADO OPERACIONAL -->
+    <div id="sec-operacional" style="scroll-margin-top:130px">
+      <div class="sec-head"><span class="sec-title">Resultado Operacional · Produção</span><div class="sec-line"></div>
+        <span style="font-size:11px;color:var(--tx-muted);white-space:nowrap">Fonte: aba DASH · Planilha CONTROLE GERAL de cada unidade · Mês corrente</span>
+      </div>
+      <div class="kpi-grid" id="op-kpi-row" style="grid-template-columns:repeat(5,1fr)"></div>
+      <div class="dim-cards-grid" id="op-cards"></div>
+    </div>
+
+    <!-- DIMENSIONAMENTO -->
+    <div id="sec-dimensionamento" style="scroll-margin-top:130px">
+      <div class="sec-head"><span class="sec-title">Dimensionamento · Solicitado vs Realizado</span><div class="sec-line"></div></div>
+
+      <div class="dim-kpi-row" id="dim-kpi-row"></div>
+
+      <div class="dim-legend">
+        <div class="dim-legend-item"><div class="dim-legend-dot" style="background:var(--dim-sol)"></div>Vagas Solicitadas</div>
+        <div class="dim-legend-item"><div class="dim-legend-dot" style="background:var(--dim-rel)"></div>Colaboradores Contratados</div>
+        <div class="dim-legend-item"><div class="dim-legend-dot" style="background:var(--dim-gap-neg)"></div>GAP Negativo (faltam pessoas)</div>
+        <div class="dim-legend-item"><div class="dim-legend-dot" style="background:var(--dim-gap-pos)"></div>GAP Positivo (excesso)</div>
+      </div>
+
+      <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:4px">
+        <div class="fg"><label>Unidade</label><select id="dim-unidade"></select></div>
+        <div class="fg"><label>Cargo</label><select id="dim-cargo"></select></div>
+      </div>
+
+      <div class="dim-cards-grid" id="dim-cards"></div>
+
+      <div class="tbl-card">
+        <div class="tbl-head">
+          <h3>Detalhe por Cargo — Solicitado × Contratado × GAP</h3>
+          <span>Dados: Planilha CONTROLE GERAL · OVER VIEW por unidade</span>
+        </div>
+        <div class="tbl-scroll">
+          <table class="tdim2">
+            <thead><tr>
+              <th class="tal">Unidade Operacional</th>
+              <th class="tal">Cargo</th>
+              <th style="background:#1E3A6E">Solicitado</th>
+              <th style="background:#0079C2">Contratado</th>
+              <th>GAP</th>
+              <th>% Realizado</th>
+              <th>Situação</th>
+            </tr></thead>
+            <tbody id="dim-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
     <!-- KPIs -->
     <div id="sec-kpi" style="scroll-margin-top:130px">
@@ -653,51 +708,11 @@ img,svg{max-width:100%}
       </div>
     </div>
 
-    <!-- DIMENSIONAMENTO -->
-    <div id="sec-dimensionamento" style="scroll-margin-top:130px">
-      <div class="sec-head"><span class="sec-title">Dimensionamento · Solicitado vs Realizado</span><div class="sec-line"></div></div>
-
-      <div class="dim-kpi-row" id="dim-kpi-row"></div>
-
-      <div class="dim-legend">
-        <div class="dim-legend-item"><div class="dim-legend-dot" style="background:var(--dim-sol)"></div>Vagas Solicitadas</div>
-        <div class="dim-legend-item"><div class="dim-legend-dot" style="background:var(--dim-rel)"></div>Colaboradores Contratados</div>
-        <div class="dim-legend-item"><div class="dim-legend-dot" style="background:var(--dim-gap-neg)"></div>GAP Negativo (faltam pessoas)</div>
-        <div class="dim-legend-item"><div class="dim-legend-dot" style="background:var(--dim-gap-pos)"></div>GAP Positivo (excesso)</div>
-      </div>
-
-      <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:4px">
-        <div class="fg"><label>Unidade</label><select id="dim-unidade"></select></div>
-        <div class="fg"><label>Cargo</label><select id="dim-cargo"></select></div>
-      </div>
-
-      <div class="dim-cards-grid" id="dim-cards"></div>
-
-      <div class="tbl-card">
-        <div class="tbl-head">
-          <h3>Detalhe por Cargo — Solicitado × Contratado × GAP</h3>
-          <span>Dados: Planilha CONTROLE GERAL · OVER VIEW por unidade</span>
-        </div>
-        <div class="tbl-scroll">
-          <table class="tdim2">
-            <thead><tr>
-              <th class="tal">Unidade Operacional</th>
-              <th class="tal">Cargo</th>
-              <th style="background:#1E3A6E">Solicitado</th>
-              <th style="background:#0079C2">Contratado</th>
-              <th>GAP</th>
-              <th>% Realizado</th>
-              <th>Situação</th>
-            </tr></thead>
-            <tbody id="dim-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
     <!-- GRÁFICOS -->
     <div id="sec-graficos" style="scroll-margin-top:130px">
       <div class="sec-head"><span class="sec-title">Análise de Presença e Produção</span><div class="sec-line"></div></div>
+
+      <div class="dim-section-title"><span></span>Presença &amp; Absenteísmo<span></span></div>
       <div class="g2">
         <div class="chart-card">
           <div class="chart-head"><div class="chart-title">% Presença por Unidade</div><div class="chart-sub">Comparativo entre unidades operacionais</div></div>
@@ -724,30 +739,32 @@ img,svg{max-width:100%}
       </div>
       <div class="g2">
         <div class="chart-card">
-          <div class="chart-head"><div class="chart-title">Produção Real × Meta (caixas)</div><div class="chart-sub">Por unidade · mês filtrado</div></div>
-          <div class="chart-divider"></div>
-          <div class="chart-body"><div class="ch"><canvas id="chart-producao"></canvas></div></div>
-        </div>
-        <div class="chart-card">
           <div class="chart-head"><div class="chart-title">Absenteísmo · Presença × Faltas</div><div class="chart-sub">Distribuição acumulada (gráfico de rosca)</div></div>
           <div class="chart-divider"></div>
           <div class="chart-body"><div class="ch-donut"><canvas id="chart-donut-absenteismo"></canvas><div class="donut-center-lbl" id="donut-absent-lbl"></div></div>
             <div class="donut-legend" id="donut-absent-legend"></div>
           </div>
         </div>
+        <div class="chart-card">
+          <div class="chart-head"><div class="chart-title">Quadro Solicitado × Total Presenças</div><div class="chart-sub">Por unidade · mês filtrado</div></div>
+          <div class="chart-divider"></div>
+          <div class="chart-body"><div class="ch"><canvas id="chart-quadro"></canvas></div></div>
+        </div>
       </div>
+
+      <div class="dim-section-title"><span></span>Produção<span></span></div>
       <div class="g2">
+        <div class="chart-card">
+          <div class="chart-head"><div class="chart-title">Produção Real × Meta (caixas)</div><div class="chart-sub">Por unidade · mês filtrado</div></div>
+          <div class="chart-divider"></div>
+          <div class="chart-body"><div class="ch"><canvas id="chart-producao"></canvas></div></div>
+        </div>
         <div class="chart-card">
           <div class="chart-head"><div class="chart-title">Produção · Meta Atingida × Não Atingida</div><div class="chart-sub">% OK vs % NOK (gráfico de rosca)</div></div>
           <div class="chart-divider"></div>
           <div class="chart-body"><div class="ch-donut"><canvas id="chart-donut-producao"></canvas><div class="donut-center-lbl" id="donut-prod-lbl"></div></div>
             <div class="donut-legend" id="donut-prod-legend"></div>
           </div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-head"><div class="chart-title">Quadro Solicitado × Total Presenças</div><div class="chart-sub">Por unidade · mês filtrado</div></div>
-          <div class="chart-divider"></div>
-          <div class="chart-body"><div class="ch"><canvas id="chart-quadro"></canvas></div></div>
         </div>
       </div>
     </div>
@@ -839,6 +856,34 @@ const DIM_DADOS = [{"unidade": "GPA CD1", "cargo": "SEPARAÇÃO", "solicitado": 
 const PRESENCA_DADOS = [{"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ANA CAROLINA PINHEIRO E SILVA", "data": "2026-07-16"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ANDERSON APARECIDO NEVES DA SILVA", "data": "2026-07-08"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "ANDRESSA PEREIRA DE AMORIM", "data": "2026-07-03"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "ANNY VICTORIA LISBOA DOS SANTOS", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ANTONIO ARAUJO DA SILVA", "data": "2026-07-06"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "DELIENE GOMES SANTOS", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "ELIZANGELA DE SOUZA SANTOS", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ELIZANGELA DE SOUZA SANTOS", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "GISLAINE OLIVEIRA DA SILVA", "data": "2026-07-21"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "GRAZIELLY SILVA RODRIGUES", "data": "2026-07-03"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "GUSTAVO MOREIRA TAVARES", "data": "2026-07-16"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "HELCIO CECCHETTO NETTO", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "ISABELA DE OLIVEIRA", "data": "2026-07-03"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "JAQUELINE DE OLIVEIRA COIMBRA", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "JAQUELINE DEL REI VARGAS SILVA", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "JHONNY MANOEL SANTOS DA SILVA", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "JOÃO KLEBER CAMPOS DA SILVA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "JONAS GABRIEL DE PAULA AMADEO", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "KALINE DA SILVA ALENCAR", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "KATIA SIMONE PEREIRA FERNANDES", "data": "2026-07-03"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "LUCAS CORREIA DA SILVA", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "LUCAS FELIX DE SOUSA", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "MARIA RIZONIA PEREIRA LINS", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "MARIANY NASCIMENTO MONTEIRO", "data": "2026-07-03"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "MATHEUS BRENNO DE ANDRADE", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "MATHEUS BRENNO DE ANDRADE", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "PAULO SERGIO RODRIGUES FLOR", "data": "2026-07-22"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "PEDRO GUILHERME DE SOUZA MENDES", "data": "2026-07-03"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "PEDRO GUILHERME DE SOUZA MENDES", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "RAFAEL GOES DA PAZ", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RAFAELA FERREIRA GARCIA PINTO", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RICARDO ALVES DA SILVA", "data": "2026-07-03"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "RICARDO ALVES DA SILVA", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "RICHARD RODRIGUES DO NASCIMENTO", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ROGERIO DOS SANTOS ANDRADE CORDEIRO", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "SABRINA ALVES AMARAL DOS SANTOS", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "SAMUEL GONCALVES GUIMARAES", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "SAMUEL GONCALVES GUIMARAES", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "SAMUEL NUNES DA SILVA", "data": "2026-07-06"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "SUSY LOURRANE ALVES DOS SANTOS", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "UBIRAJARA DA SILVA NUNES LOPES", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "VITORIA RAFAEL E SILVA", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "ERICA NUNES DA SILVA", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "WALISON MATIAS DA SILVA", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "NAYARA CRISTINA IACHITZKI BRITO", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "KETLIN DA SILVA ALENCAR", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "FELIPE RAFAEL BENTO MARQUES", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "ANDERSON PEREIRA DA ROCHA", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ANDERSON PEREIRA DA ROCHA", "data": "2026-07-21"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ANDRE LUIZ BARBOSA", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ANTHONY STEVEN NINO JAIMES", "data": "2026-07-22"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "BRUNO FERNANDES DA SILVA", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "BRUNO FERNANDES DA SILVA", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "CARLOS EDUARDO PAGNOZZI BRAMBILA", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "CAUAN RODRIGUES DE MENEZES", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "DANTIELE LIMA GARCIA", "data": "2026-07-17"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "DANTIELE LIMA GARCIA", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "DAVID ALVES RIBEIRO", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "DAVID ALVES RIBEIRO", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "DENILSON DA LUZ SANTOS DA SILVA", "data": "2026-07-10"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "EDSON OLIVEIRA DE JESUS", "data": "2026-07-08"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ERICK SILVA DO NASCIMENTO", "data": "2026-07-18"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "GENIVALDO DA SILVA SANTOS", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "GUILHERME SIMOES PEREIRA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "GUSTAVO GABRIEL DOS SANTOS FARIAS", "data": "2026-07-17"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "GUSTAVO GABRIEL DOS SANTOS FARIAS", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "GUSTAVO THIAGO PEREIRA RODRIGUES GONCALVES", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "GUSTAVO THIAGO PEREIRA RODRIGUES GONCALVES", "data": "2026-07-22"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "IGOR EVANDRO PEREIRA", "data": "2026-07-05"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "JAINE DE JESUS SANTOS", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "JHONNATAN WELLINGTON GOMES DO NASCIMENTO", "data": "2026-07-08"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "JOSE ENRIQUE OLIVEIRES CUENCA", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "JOSE RODRIGUES DE SOUSA", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "JUAN FELIPE DA SILVA SANTANA", "data": "2026-07-08"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "JUCIELIO FILHO GOMES DE ASSIS", "data": "2026-07-08"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "KAUA ALVES DE OLIVEIRA MAIA", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "KAUAN DIONIZIO ARAGAO DA SILVA", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "KECHILEN FERNANDES DA SILVA", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "KECHILEN FERNANDES DA SILVA", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "LEONARDO DOS SANTOS RICO", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "MANOEL NETO ALMEIDA BARRETO", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "MARCIO FERREIRA ALVES", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "NAYARA VARGAS", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RAFAEL FERREIRA LOPES", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "RAFAEL FERREIRA LOPES", "data": "2026-07-18"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ROBERT SOARES OLIVEIRA DE SOUZA", "data": "2026-07-08"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RONALD GOMES DA SILVA", "data": "2026-07-17"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "SANDRO MORAIS", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "SANDRO MORAIS", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "VINICIUS FERREIRA DA SILVA", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "VITOR DOS SANTOS BORGES DA SILVA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "VITOR DOS SANTOS BORGES DA SILVA", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "WALANDYA KIRLA GOMES XAVIER", "data": "2026-07-08"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "WALQUICIONE REIS DA SILVA", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "WESLEY HENRIQUE RIBEIRO BONDEZZAN", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "IVA ELLEN DA SILVA FERREIRA", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ALESSANDRA CARDOSO", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ALEX ALVES DA SILVA", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ALEXANDRE RODRIGUES DE LISBOA", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ALLYSON MELO SAMPAIO", "data": "2026-07-08"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ANTONIO LUCAS BARROSO DA SILVA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "BRUNO HENRIQUE RODRIGUES DE OLIVEIRA", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "CRISTIANO ARISTIDES DOS SANTOS IZIDRO", "data": "2026-07-21"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "DANIEL FERNANDES JULIO", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "DANIEL FERNANDES JULIO", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "DARCILENE MARQUES DE BRITO", "data": "2026-07-17"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "DARCILENE MARQUES DE BRITO", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "DIEGO DA CUNHA", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "DOUGLAS GABRIEL RIBEIRO DOS SANTOS BULGARI", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "EMERSON SILVA OLIVEIRA", "data": "2026-07-21"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "EVERTON DA SILVA FERREIRA DO NASCIMENTO", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "FABIO LUIZ RIBEIRO DA SILVA", "data": "2026-07-17"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "FELIPE DOS SANTOS SILVA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "FERNANDO SANTANA DA SILVA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "GUILHERME BISPO SANTANA", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "GUSTAVO AZEVEDO DE ATAIDE", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "HENRIQUE RODRIGO DE JESUS NASCIMENTO", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "HIGOR MOURA PIMENTEL", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "HIGOR MOURA PIMENTEL", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "IZAQUE JOAQUIM DE MORAIS", "data": "2026-07-10"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "JEFFERSON DOS SANTOS RODRIGUES", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "JULYANE MONTEIRO ARANHA", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "KAMILY ROCHA SILVA", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "KAUE IGOR NASCIMENTO DE OLIVEIRA", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "LUCAS GONCALVES SILVANO", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "LUCAS RAYLAN DA SILVA MOURA", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "LUIS RICARDO SIMOES NETO", "data": "2026-07-10"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "LUIS RICARDO SIMOES NETO", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "MANOEL WELITON BARROS LIMA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "MARCOS ALVES FERREIRA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "MAYSA MACHADO", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RAFAEL ALVES SILVA", "data": "2026-07-21"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RAFAEL COSTA DUARTE", "data": "2026-07-17"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "REBECA DA SILVA MORAES", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "REBECA DA SILVA MORAES", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "REGIANE MARQUES DA SILVA", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "REGIANE MARQUES DA SILVA", "data": "2026-07-13"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "RENATO SALOMAO LOPES", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RICHARD MIKEAS CIPRIANO DUARTE", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ROBSON WILLIAN GOMES DE LIMA", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RODOLFO MARTINS BENTO DE SOUZA", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "RODRIGO BATISTA DE OLIVEIRA SILVA", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RODRIGO LUIZ SANTOS", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "RODRIGO LUIZ SANTOS", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "ROTECHILDE ELIAS NOGUEIRA", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ROTECHILDE ELIAS NOGUEIRA", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "SUZILENE TANALA", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "SUZILENE TANALA", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "WALLACY PEREIRA DA SILVA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "WILDMA MEDRADO SILVA", "data": "2026-07-21"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "WILTON RODRIGUES DOS SANTOS", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "DIOGO GRACILIANO MAIA", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "GUILHERME SAMUEL GRILO DA SILVA", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "MAYARA DE FATIMA GONÇALVES DA SILVA", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "VINICIUS MATHEUS DOS SANTOS", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "WENDELL BARBOSA DOS SANTOS", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ALEXANDRE DE JESUS", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ILAN DUARTE ALVES", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "KHEEL MARKS RODRIGUES", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "MARCOS LEANDRO FAVORINO DA SILVA", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "ROSIMEIRE RIBEIRO DA SILVA", "data": "2026-07-03"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ROSIMEIRE RIBEIRO DA SILVA", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "WELINTON PEREIRA MINELLI", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "JULYANE MONTEIRO ARANHA", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "MARCOS ALVES FERREIRA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RAFAEL AUGUSTO FUIZA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "ADENILTON DA SILVA DAMASCENO", "data": "2026-07-28"}, {"unidade": "GPA CD2", "tipo": "Desligamento", "colaborador": "EMANUEL DE LUCAS CONCEIÇAO DE SOUSA", "data": "2026-07-15"}, {"unidade": "GPA CD2", "tipo": "Desligamento", "colaborador": "MURILO CARVALHO DA SILVA", "data": "2026-07-13"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "DANILO DE OLIVEIRA FRANCISCO", "data": "2026-07-14"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "JHONATAN TEODORO DA SILVA", "data": "2026-07-14"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "THALLES ISRAEL SILVA ARAUJO", "data": "2026-07-14"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "FAGNER JOSE DA SILVA", "data": "2026-07-16"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "JONAS DE MOURA AMARAL", "data": "2026-07-16"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "CARLOS EDUARDO RODRIGUES", "data": "2026-07-16"}, {"unidade": "GPA CD2", "tipo": "Desligamento", "colaborador": "ANDERSON DE FARIAS", "data": "2026-07-20"}, {"unidade": "GPA CD2", "tipo": "Desligamento", "colaborador": "RYAN YURI MIGUEL", "data": "2026-07-06"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "ALEX SANDRO CARDOSO  DOS SANTOS", "data": "2026-07-02"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "WALISON DA SILVA SANTOS", "data": "2026-07-14"}, {"unidade": "GPA CD2", "tipo": "Desligamento", "colaborador": "WALISON DA SILVA SANTOS", "data": "2026-07-17"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "RENATO AUGUSTO DE SOUZA", "data": "2026-07-22"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "JORGE WASHINGTON MAIA", "data": "2026-07-22"}, {"unidade": "GPA CD2", "tipo": "Desligamento", "colaborador": "GILDEVAN CAMPOS SANTANA", "data": "2026-07-03"}, {"unidade": "GPA CD2", "tipo": "Desligamento", "colaborador": "MATHEUS DE OLIVEIRA", "data": "2026-07-28"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "BRAYAN WILLIAN PEREIRA", "data": "2026-07-02"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "MARCOS SILVA QUEIROS", "data": "2026-07-02"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "FELIPE CARDOSO DE ALMEIDA", "data": "2026-07-02"}, {"unidade": "GPA CD2", "tipo": "Desligamento", "colaborador": "FELIPE CARDOSO DE ALMEIDA", "data": "2026-07-28"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "IGOR MOITINHO OLIVEIRA", "data": "2026-07-14"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "VICTOR ALVES DE SOUZA", "data": "2026-07-14"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "CAIO GABRIEL JESUS DA SILVA", "data": "2026-07-14"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "ANTONIO MARCOS DA SILVA SANTOS", "data": "2026-07-01"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "CLEITON GOMES DA SILVA", "data": "2026-07-10"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "ERICK ALUISIO DOS SANTOS", "data": "2026-07-06"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "JOSE PINTO ALFREDO", "data": "2026-07-16"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "KEVIN OLIVEIRA FRANCA", "data": "2026-07-08"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "LUCAS DA SILVA BRASIL", "data": "2026-07-10"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "JOAB RAVELE DA CONCEIÇÃO SANTANA", "data": "2026-07-27"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "ANTONIO LEANDRO DA SILVA MELO FILHO", "data": "2026-07-07"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "CHINONSO CHRISTIAN NWEZEH", "data": "2026-07-16"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "GABRIEL ERICK ROJO SILVA", "data": "2026-07-16"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "JORLEANO RODRIGUES DE OLIVEIRA", "data": "2026-07-23"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "KAUA HENRIQUE MARQUES DA SILVA", "data": "2026-07-16"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "LUCIANO SOARES DA SILVA", "data": "2026-07-16"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "VICTOR HUGO DE OLIVEIRA JUNIOR", "data": "2026-07-22"}];
 const PRODUCAO_DADOS = [{"unidade": "GPA CD1", "real": 915677, "meta": 1524600}, {"unidade": "GPA CD2", "real": 222769, "meta": 191900}, {"unidade": "GPA CD4", "real": 511308, "meta": 667150}];
 const MEDIA_CAIXA_HD = {"GPA CD1": 360, "GPA CD2": 479, "GPA CD4": 422};
+/* Detalhe por turno + absenteísmo, extraído da aba DASH ("RESULTADO OPERACIONAL")
+   de cada planilha CONTROLE GERAL (CD1/CD2/CD4) — mês corrente (Julho/26). */
+const OPERACIONAL_DADOS = {
+  "GPA CD1": {
+    turnos: [
+      {turno:"1º Turno", mediaCaixaHD:387, meta:601200, realizado:388139},
+      {turno:"2º Turno", mediaCaixaHD:352, meta:493800, realizado:289811},
+      {turno:"3º Turno", mediaCaixaHD:332, meta:429600, realizado:237727}
+    ],
+    absenteismo: {atestado:226, falta:694, presenca:3956, pct:23.26}
+  },
+  "GPA CD2": {
+    turnos: [
+      {turno:"1º Turno", mediaCaixaHD:0,   meta:20400,  realizado:23342},
+      {turno:"2º Turno", mediaCaixaHD:500, meta:53100,  realizado:59056},
+      {turno:"3º Turno", mediaCaixaHD:474, meta:118400, realizado:140371}
+    ],
+    absenteismo: {atestado:44, falta:41, presenca:591, pct:14.38}
+  },
+  "GPA CD4": {
+    turnos: [
+      {turno:"1º Turno", mediaCaixaHD:453, meta:234300, realizado:193064},
+      {turno:"2º Turno", mediaCaixaHD:469, meta:284900, realizado:242807},
+      {turno:"3º Turno", mediaCaixaHD:280, meta:147950, realizado:75437}
+    ],
+    absenteismo: {atestado:144, falta:63, presenca:1637, pct:12.65}
+  }
+};
 </script>
 <script>
 /* ===== Status metadata ===== */
@@ -1192,8 +1237,15 @@ function renderGrade(){
 }
 
 function syncRowHeights(){
+  // As duas tabelas (frozen + scroll) usam a mesma classe .tgrade e regras de
+  // altura 100% via CSS (line-height/padding fixos, white-space:nowrap), então
+  // as alturas já batem sem ajuste via JS. Para bases grandes (milhares de
+  // colaboradores), o loop de getBoundingClientRect() por linha abaixo força
+  // um reflow síncrono por iteração e trava a aba — então só roda esse ajuste
+  // fino para conjuntos pequenos, onde o custo é desprezível.
   const fRows = document.querySelectorAll('#grade-frozen-body tr');
   const sRows = document.querySelectorAll('#grade-scroll-body tr');
+  if(fRows.length > 200) return;
   const n = Math.min(fRows.length, sRows.length);
   for(let i=0;i<n;i++){
     fRows[i].style.height='auto'; sRows[i].style.height='auto';
@@ -1243,6 +1295,81 @@ function dimRowColor(pct){
   if(pct>=80) return '#1a8c4e';
   if(pct>=60) return '#d4930a';
   return '#c0392b';
+}
+
+function pct1safe(n){ return isFinite(n) ? pct1(n) : '0,0'; }
+function renderOperacional(){
+  const unidades = PRODUCAO_DADOS.map(p=>p.unidade);
+  const totReal = PRODUCAO_DADOS.reduce((a,p)=>a+p.real,0);
+  const totMeta = PRODUCAO_DADOS.reduce((a,p)=>a+p.meta,0);
+  const totPct = totMeta>0 ? totReal/totMeta*100 : 0;
+  const totAtestado = unidades.reduce((a,u)=>a+OPERACIONAL_DADOS[u].absenteismo.atestado,0);
+  const totFalta = unidades.reduce((a,u)=>a+OPERACIONAL_DADOS[u].absenteismo.falta,0);
+  const totPresenca = unidades.reduce((a,u)=>a+OPERACIONAL_DADOS[u].absenteismo.presenca,0);
+  const absDenom = totPresenca+totFalta+totAtestado;
+  const absPctGeral = absDenom>0 ? (totFalta+totAtestado)/absDenom*100 : 0;
+  const mediaGlobalPonderada = unidades.length ? Math.round(unidades.reduce((a,u)=>a+MEDIA_CAIXA_HD[u],0)/unidades.length) : 0;
+
+  document.getElementById('op-kpi-row').innerHTML = [
+    {lbl:'Produção Real (caixas)', val:fmt(totReal), sub:'Acumulado no mês · 3 unidades', cls:'k-indigo'},
+    {lbl:'Meta de Produção', val:fmt(totMeta), sub:'Caixas planejadas no mês', cls:''},
+    {lbl:'% Meta Atingida', val:pct1safe(totPct)+'%', sub: totPct>=100?'Meta batida':'Abaixo da meta', cls: totPct>=100?'k-green':totPct>=70?'k-amber':'k-red'},
+    {lbl:'Média Caixa H/D', val:fmt(mediaGlobalPonderada), sub:'Média simples entre unidades', cls:'k-blue'},
+    {lbl:'Absenteísmo Geral', val:pct1safe(absPctGeral)+'%', sub:`${fmt(totFalta)} faltas · ${fmt(totAtestado)} atestados`, cls: absPctGeral<=15?'k-green':absPctGeral<=25?'k-amber':'k-red'},
+  ].map(k=>`<div class="kpi ${k.cls}"><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  const cardsHtml = PRODUCAO_DADOS.map(p=>{
+    const und = p.unidade;
+    const op = OPERACIONAL_DADOS[und] || {turnos:[], absenteismo:{atestado:0,falta:0,presenca:0,pct:0}};
+    const pctReal = p.meta>0 ? p.real/p.meta*100 : 0;
+    const badgeCls = pctReal>=100?'dim-gap-ok':pctReal>=70?'dim-gap-warn':'dim-gap-crit';
+    const badgeTxt = pctReal>=100?'Meta batida':pctReal>=70?'Abaixo da meta':'Crítico';
+    const maxVal = Math.max(...op.turnos.map(t=>Math.max(t.meta,t.realizado)), 1);
+    const turnosHtml = op.turnos.map(t=>{
+      const tp = t.meta>0 ? Math.round(t.realizado/t.meta*1000)/10 : 0;
+      const wM = Math.round(t.meta/maxVal*100), wR = Math.round(t.realizado/maxVal*100);
+      const corR = tp>=100?'var(--green)':tp>=70?'var(--amber)':'var(--red)';
+      return `
+        <div class="dim-row">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div class="dim-row-label">${t.turno}${t.mediaCaixaHD?` · ${t.mediaCaixaHD} cx/h·d`:''}</div>
+            <span style="font-size:10px;font-weight:800;color:${corR}">${tp.toFixed(1).replace('.',',')}%</span>
+          </div>
+          <div class="dim-row-bars">
+            <div class="dim-bar-item">
+              <div class="dim-bar-legend" style="color:var(--dim-sol)">Meta</div>
+              <div class="dim-bar-track"><div class="dim-bar-fill sol" style="width:${wM}%"></div></div>
+              <div class="dim-bar-val sol">${fmt(t.meta)}</div>
+            </div>
+            <div class="dim-bar-item">
+              <div class="dim-bar-legend" style="color:var(--dim-rel)">Realizado</div>
+              <div class="dim-bar-track"><div class="dim-bar-fill rel" style="width:${wR}%;background:${corR}"></div></div>
+              <div class="dim-bar-val rel" style="color:${corR}">${fmt(t.realizado)}</div>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+    return `
+      <div class="dim-card">
+        <div class="dim-card-head">
+          <div>
+            <div class="dim-card-uni">${und}</div>
+            <div style="font-size:11px;color:var(--tx-muted);margin-top:2px">${fmt(p.real)} de ${fmt(p.meta)} caixas · ${MEDIA_CAIXA_HD[und]||'—'} cx/h·d global</div>
+          </div>
+          <span class="dim-card-gap-badge ${badgeCls}">${badgeTxt}</span>
+        </div>
+        <div class="dim-rows">${turnosHtml}
+          <div class="dim-row" style="margin-top:2px;padding-top:8px;border-top:1px dashed var(--border-light)">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="dim-row-label">Absenteísmo do mês</div>
+              <span style="font-size:10px;font-weight:800;color:${op.absenteismo.pct<=15?'var(--green)':op.absenteismo.pct<=25?'var(--amber)':'var(--red)'}">${op.absenteismo.pct.toFixed(2).replace('.',',')}%</span>
+            </div>
+            <div style="font-size:10.5px;color:var(--tx-muted);margin-top:2px">${fmt(op.absenteismo.presenca)} presenças · ${fmt(op.absenteismo.falta)} faltas · ${fmt(op.absenteismo.atestado)} atestados</div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+  document.getElementById('op-cards').innerHTML = cardsHtml;
 }
 
 function renderDimensionamento(){
@@ -1620,7 +1747,7 @@ function renderResumo(){
 }
 
 /* ===== Sidebar / navegação / mobile (idêntico Bimbo) ===== */
-const NAV_IDS = ['nav-kpi','nav-grade','nav-dimensionamento','nav-graficos','nav-evolucao','nav-presenca','nav-resumo'];
+const NAV_IDS = ['nav-operacional','nav-dimensionamento','nav-kpi','nav-grade','nav-graficos','nav-evolucao','nav-presenca','nav-resumo'];
 function navTo(sectionId, navIdx){
   closeMobileNav();
   NAV_IDS.forEach((id,i)=>{
@@ -1664,6 +1791,7 @@ function initMobileMenu(){
 
 /* ===== Render all ===== */
 function renderAll(){
+  renderOperacional();
   renderKPIs();
   renderGrade();
   renderDimensionamento();
