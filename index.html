@@ -706,6 +706,19 @@ img,svg{max-width:100%}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
       <span class="sb-item-txt">Resumo</span>
     </div>
+    <div class="sb-sec">Gestão &amp; Custos</div>
+    <div class="sb-item" id="nav-contratos" data-target="sec-contratos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/><path d="M12 3v1M12 20v1M3 12h1M20 12h1"/></svg>
+      <span class="sb-item-txt">Radar de Contratos</span>
+    </div>
+    <div class="sb-item" id="nav-prodind" data-target="sec-prodind">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+      <span class="sb-item-txt">Produtividade Individual</span>
+    </div>
+    <div class="sb-item" id="nav-he" data-target="sec-he">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="13" r="8"/><path d="M9 1h6M12 1v3"/></svg>
+      <span class="sb-item-txt">Hora Extra</span>
+    </div>
   </nav>
   <div class="sb-toggle" id="sb-toggle-btn">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg>
@@ -1014,6 +1027,97 @@ img,svg{max-width:100%}
       </div>
     </div>
 
+    <!-- ===== RADAR DE CONTRATOS TEMPORARIOS ===== -->
+    <div id="sec-contratos" style="scroll-margin-top:130px">
+      <div class="sec-head"><span class="sec-title">Radar de Contratos Temporários</span><div class="sec-line"></div></div>
+
+      <div class="dim-kpi-row" id="ctr-kpi-row"></div>
+
+      <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:4px">
+        <div class="fg"><label>Unidade</label><select id="ctr-unidade"></select></div>
+        <div class="fg"><label>Situação</label><select id="ctr-status"></select></div>
+      </div>
+
+      <div class="tbl-card">
+        <div class="tbl-head">
+          <h3>Colaboradores com Contrato Temporário — Vencimento Ordenado por Urgência</h3>
+          <span>Dados: Planilha Dados RH · referência 01/08/2026</span>
+        </div>
+        <div class="tbl-scroll" style="max-height:520px">
+          <table class="tdim2">
+            <thead><tr>
+              <th class="tal">Colaborador</th>
+              <th class="tal">Unidade</th>
+              <th>Dias até Vencer</th>
+              <th>Situação</th>
+            </tr></thead>
+            <tbody id="ctr-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PRODUTIVIDADE INDIVIDUAL ===== -->
+    <div id="sec-prodind" style="scroll-margin-top:130px">
+      <div class="sec-head"><span class="sec-title">Produtividade Individual · Curva de Aderência à Meta</span><div class="sec-line"></div></div>
+
+      <div class="dim-kpi-row" id="pi-kpi-row"></div>
+
+      <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:4px">
+        <div class="fg"><label>Unidade</label><select id="pi-unidade"></select></div>
+      </div>
+
+      <div class="tbl-card" style="margin-bottom:16px">
+        <div class="tbl-head">
+          <h3>Distribuição de Colaboradores por Faixa de Aderência à Meta</h3>
+          <span>Dados: Relatório Diário de Produção</span>
+        </div>
+        <div id="pi-buckets" style="padding:16px"></div>
+      </div>
+
+      <div class="op-cards-grid" style="display:grid;gap:16px">
+        <div class="tbl-card">
+          <div class="tbl-head"><h3>Top 10 · Maior Produtividade</h3></div>
+          <div class="tbl-scroll"><table class="tdim2"><thead><tr><th class="tal">Colaborador</th><th>% da Meta</th></tr></thead><tbody id="pi-top"></tbody></table></div>
+        </div>
+        <div class="tbl-card">
+          <div class="tbl-head"><h3>Bottom 10 · Menor Produtividade</h3></div>
+          <div class="tbl-scroll"><table class="tdim2"><thead><tr><th class="tal">Colaborador</th><th>% da Meta</th></tr></thead><tbody id="pi-bottom"></tbody></table></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== HORA EXTRA ===== -->
+    <div id="sec-he" style="scroll-margin-top:130px">
+      <div class="sec-head"><span class="sec-title">Hora Extra · Diurna &amp; Noturna</span><div class="sec-line"></div></div>
+
+      <div class="dim-kpi-row" id="he-kpi-row"></div>
+
+      <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:4px">
+        <div class="fg"><label>Mês</label><select id="he-mes"></select></div>
+      </div>
+
+      <div class="tbl-card">
+        <div class="tbl-head">
+          <h3>Horas Extras por Unidade — Ordenado por Maior Volume</h3>
+          <span>Dados: Espelhos de Ponto EzPoint · soma diurna (EX) + noturna (EN)</span>
+        </div>
+        <div class="tbl-scroll">
+          <table class="tdim2">
+            <thead><tr>
+              <th class="tal">Unidade</th>
+              <th>HE Diurna (h)</th>
+              <th>HE Noturna (h)</th>
+              <th>HE Total (h)</th>
+              <th>Colaboradores c/ HE</th>
+              <th>Média HE/Colaborador (h)</th>
+            </tr></thead>
+            <tbody id="he-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /content -->
 
   <footer>
@@ -1028,7 +1132,7 @@ img,svg{max-width:100%}
 <script src="data_block_full.js"></script>
 <script>
 
-const DIM_DADOS = [{"unidade": "GPA CD1", "cargo": "SEPARAÇÃO", "solicitado": 260, "contratado": 189}, {"unidade": "GPA CD1", "cargo": "SETOR 7801", "solicitado": 27, "contratado": 24}, {"unidade": "GPA CD1", "cargo": "OPERADOR DE EMPILHADEIRA", "solicitado": 2, "contratado": 0}, {"unidade": "GPA CD2", "cargo": "SEPARAÇÃO", "solicitado": 50, "contratado": 42}, {"unidade": "GPA CD4", "cargo": "SEPARAÇÃO", "solicitado": 102, "contratado": 64}, {"unidade": "GPA CD4", "cargo": "EXPEDIÇÃO", "solicitado": 6, "contratado": 0}];
+const DIM_DADOS = [{"unidade": "GPA CD1", "cargo": "SEPARAÇÃO", "solicitado": 260, "contratado": 212}, {"unidade": "GPA CD1", "cargo": "SETOR 7801", "solicitado": 27, "contratado": 23}, {"unidade": "GPA CD1", "cargo": "OPERADOR DE EMPILHADEIRA", "solicitado": 14, "contratado": 0}, {"unidade": "GPA CD2", "cargo": "SEPARAÇÃO", "solicitado": 50, "contratado": 43}, {"unidade": "GPA CD4", "cargo": "SEPARAÇÃO", "solicitado": 102, "contratado": 62}, {"unidade": "GPA CD4", "cargo": "EXPEDIÇÃO", "solicitado": 6, "contratado": 0}];
 const PRESENCA_DADOS = [{"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ANA CAROLINA PINHEIRO E SILVA", "data": "2026-07-16"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ANDERSON APARECIDO NEVES DA SILVA", "data": "2026-07-08"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "ANDRESSA PEREIRA DE AMORIM", "data": "2026-07-03"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "ANNY VICTORIA LISBOA DOS SANTOS", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ANTONIO ARAUJO DA SILVA", "data": "2026-07-06"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "DELIENE GOMES SANTOS", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "ELIZANGELA DE SOUZA SANTOS", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ELIZANGELA DE SOUZA SANTOS", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "GISLAINE OLIVEIRA DA SILVA", "data": "2026-07-21"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "GRAZIELLY SILVA RODRIGUES", "data": "2026-07-03"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "GUSTAVO MOREIRA TAVARES", "data": "2026-07-16"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "HELCIO CECCHETTO NETTO", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "ISABELA DE OLIVEIRA", "data": "2026-07-03"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "JAQUELINE DE OLIVEIRA COIMBRA", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "JAQUELINE DEL REI VARGAS SILVA", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "JHONNY MANOEL SANTOS DA SILVA", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "JOÃO KLEBER CAMPOS DA SILVA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "JONAS GABRIEL DE PAULA AMADEO", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "KALINE DA SILVA ALENCAR", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "KATIA SIMONE PEREIRA FERNANDES", "data": "2026-07-03"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "LUCAS CORREIA DA SILVA", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "LUCAS FELIX DE SOUSA", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "MARIA RIZONIA PEREIRA LINS", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "MARIANY NASCIMENTO MONTEIRO", "data": "2026-07-03"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "MATHEUS BRENNO DE ANDRADE", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "MATHEUS BRENNO DE ANDRADE", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "PAULO SERGIO RODRIGUES FLOR", "data": "2026-07-22"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "PEDRO GUILHERME DE SOUZA MENDES", "data": "2026-07-03"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "PEDRO GUILHERME DE SOUZA MENDES", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "RAFAEL GOES DA PAZ", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RAFAELA FERREIRA GARCIA PINTO", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RICARDO ALVES DA SILVA", "data": "2026-07-03"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "RICARDO ALVES DA SILVA", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "RICHARD RODRIGUES DO NASCIMENTO", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ROGERIO DOS SANTOS ANDRADE CORDEIRO", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "SABRINA ALVES AMARAL DOS SANTOS", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "SAMUEL GONCALVES GUIMARAES", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "SAMUEL GONCALVES GUIMARAES", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "SAMUEL NUNES DA SILVA", "data": "2026-07-06"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "SUSY LOURRANE ALVES DOS SANTOS", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "UBIRAJARA DA SILVA NUNES LOPES", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "VITORIA RAFAEL E SILVA", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "ERICA NUNES DA SILVA", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "WALISON MATIAS DA SILVA", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "NAYARA CRISTINA IACHITZKI BRITO", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "KETLIN DA SILVA ALENCAR", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "FELIPE RAFAEL BENTO MARQUES", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "ANDERSON PEREIRA DA ROCHA", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ANDERSON PEREIRA DA ROCHA", "data": "2026-07-21"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ANDRE LUIZ BARBOSA", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ANTHONY STEVEN NINO JAIMES", "data": "2026-07-22"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "BRUNO FERNANDES DA SILVA", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "BRUNO FERNANDES DA SILVA", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "CARLOS EDUARDO PAGNOZZI BRAMBILA", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "CAUAN RODRIGUES DE MENEZES", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "DANTIELE LIMA GARCIA", "data": "2026-07-17"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "DANTIELE LIMA GARCIA", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "DAVID ALVES RIBEIRO", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "DAVID ALVES RIBEIRO", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "DENILSON DA LUZ SANTOS DA SILVA", "data": "2026-07-10"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "EDSON OLIVEIRA DE JESUS", "data": "2026-07-08"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ERICK SILVA DO NASCIMENTO", "data": "2026-07-18"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "GENIVALDO DA SILVA SANTOS", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "GUILHERME SIMOES PEREIRA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "GUSTAVO GABRIEL DOS SANTOS FARIAS", "data": "2026-07-17"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "GUSTAVO GABRIEL DOS SANTOS FARIAS", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "GUSTAVO THIAGO PEREIRA RODRIGUES GONCALVES", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "GUSTAVO THIAGO PEREIRA RODRIGUES GONCALVES", "data": "2026-07-22"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "IGOR EVANDRO PEREIRA", "data": "2026-07-05"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "JAINE DE JESUS SANTOS", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "JHONNATAN WELLINGTON GOMES DO NASCIMENTO", "data": "2026-07-08"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "JOSE ENRIQUE OLIVEIRES CUENCA", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "JOSE RODRIGUES DE SOUSA", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "JUAN FELIPE DA SILVA SANTANA", "data": "2026-07-08"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "JUCIELIO FILHO GOMES DE ASSIS", "data": "2026-07-08"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "KAUA ALVES DE OLIVEIRA MAIA", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "KAUAN DIONIZIO ARAGAO DA SILVA", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "KECHILEN FERNANDES DA SILVA", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "KECHILEN FERNANDES DA SILVA", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "LEONARDO DOS SANTOS RICO", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "MANOEL NETO ALMEIDA BARRETO", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "MARCIO FERREIRA ALVES", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "NAYARA VARGAS", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RAFAEL FERREIRA LOPES", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "RAFAEL FERREIRA LOPES", "data": "2026-07-18"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ROBERT SOARES OLIVEIRA DE SOUZA", "data": "2026-07-08"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RONALD GOMES DA SILVA", "data": "2026-07-17"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "SANDRO MORAIS", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "SANDRO MORAIS", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "VINICIUS FERREIRA DA SILVA", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "VITOR DOS SANTOS BORGES DA SILVA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "VITOR DOS SANTOS BORGES DA SILVA", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "WALANDYA KIRLA GOMES XAVIER", "data": "2026-07-08"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "WALQUICIONE REIS DA SILVA", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "WESLEY HENRIQUE RIBEIRO BONDEZZAN", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "IVA ELLEN DA SILVA FERREIRA", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ALESSANDRA CARDOSO", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ALEX ALVES DA SILVA", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ALEXANDRE RODRIGUES DE LISBOA", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ALLYSON MELO SAMPAIO", "data": "2026-07-08"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ANTONIO LUCAS BARROSO DA SILVA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "BRUNO HENRIQUE RODRIGUES DE OLIVEIRA", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "CRISTIANO ARISTIDES DOS SANTOS IZIDRO", "data": "2026-07-21"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "DANIEL FERNANDES JULIO", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "DANIEL FERNANDES JULIO", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "DARCILENE MARQUES DE BRITO", "data": "2026-07-17"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "DARCILENE MARQUES DE BRITO", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "DIEGO DA CUNHA", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "DOUGLAS GABRIEL RIBEIRO DOS SANTOS BULGARI", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "EMERSON SILVA OLIVEIRA", "data": "2026-07-21"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "EVERTON DA SILVA FERREIRA DO NASCIMENTO", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "FABIO LUIZ RIBEIRO DA SILVA", "data": "2026-07-17"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "FELIPE DOS SANTOS SILVA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "FERNANDO SANTANA DA SILVA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "GUILHERME BISPO SANTANA", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "GUSTAVO AZEVEDO DE ATAIDE", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "HENRIQUE RODRIGO DE JESUS NASCIMENTO", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "HIGOR MOURA PIMENTEL", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "HIGOR MOURA PIMENTEL", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "IZAQUE JOAQUIM DE MORAIS", "data": "2026-07-10"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "JEFFERSON DOS SANTOS RODRIGUES", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "JULYANE MONTEIRO ARANHA", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "KAMILY ROCHA SILVA", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "KAUE IGOR NASCIMENTO DE OLIVEIRA", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "LUCAS GONCALVES SILVANO", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "LUCAS RAYLAN DA SILVA MOURA", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "LUIS RICARDO SIMOES NETO", "data": "2026-07-10"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "LUIS RICARDO SIMOES NETO", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "MANOEL WELITON BARROS LIMA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "MARCOS ALVES FERREIRA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "MAYSA MACHADO", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RAFAEL ALVES SILVA", "data": "2026-07-21"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RAFAEL COSTA DUARTE", "data": "2026-07-17"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "REBECA DA SILVA MORAES", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "REBECA DA SILVA MORAES", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "REGIANE MARQUES DA SILVA", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "REGIANE MARQUES DA SILVA", "data": "2026-07-13"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "RENATO SALOMAO LOPES", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RICHARD MIKEAS CIPRIANO DUARTE", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ROBSON WILLIAN GOMES DE LIMA", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RODOLFO MARTINS BENTO DE SOUZA", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "RODRIGO BATISTA DE OLIVEIRA SILVA", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RODRIGO LUIZ SANTOS", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "RODRIGO LUIZ SANTOS", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "ROTECHILDE ELIAS NOGUEIRA", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ROTECHILDE ELIAS NOGUEIRA", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "SUZILENE TANALA", "data": "2026-07-15"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "SUZILENE TANALA", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "WALLACY PEREIRA DA SILVA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "WILDMA MEDRADO SILVA", "data": "2026-07-21"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "WILTON RODRIGUES DOS SANTOS", "data": "2026-07-14"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "DIOGO GRACILIANO MAIA", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "GUILHERME SAMUEL GRILO DA SILVA", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "MAYARA DE FATIMA GONÇALVES DA SILVA", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "VINICIUS MATHEUS DOS SANTOS", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "WENDELL BARBOSA DOS SANTOS", "data": "2026-07-23"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ALEXANDRE DE JESUS", "data": "2026-07-20"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ILAN DUARTE ALVES", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "KHEEL MARKS RODRIGUES", "data": "2026-07-04"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "MARCOS LEANDRO FAVORINO DA SILVA", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "ROSIMEIRE RIBEIRO DA SILVA", "data": "2026-07-03"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "ROSIMEIRE RIBEIRO DA SILVA", "data": "2026-07-28"}, {"unidade": "GPA CD1", "tipo": "Desligamento", "colaborador": "WELINTON PEREIRA MINELLI", "data": "2026-07-27"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "JULYANE MONTEIRO ARANHA", "data": "2026-07-02"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "MARCOS ALVES FERREIRA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "RAFAEL AUGUSTO FUIZA", "data": "2026-07-07"}, {"unidade": "GPA CD1", "tipo": "Admissão", "colaborador": "ADENILTON DA SILVA DAMASCENO", "data": "2026-07-28"}, {"unidade": "GPA CD2", "tipo": "Desligamento", "colaborador": "EMANUEL DE LUCAS CONCEIÇAO DE SOUSA", "data": "2026-07-15"}, {"unidade": "GPA CD2", "tipo": "Desligamento", "colaborador": "MURILO CARVALHO DA SILVA", "data": "2026-07-13"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "DANILO DE OLIVEIRA FRANCISCO", "data": "2026-07-14"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "JHONATAN TEODORO DA SILVA", "data": "2026-07-14"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "THALLES ISRAEL SILVA ARAUJO", "data": "2026-07-14"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "FAGNER JOSE DA SILVA", "data": "2026-07-16"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "JONAS DE MOURA AMARAL", "data": "2026-07-16"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "CARLOS EDUARDO RODRIGUES", "data": "2026-07-16"}, {"unidade": "GPA CD2", "tipo": "Desligamento", "colaborador": "ANDERSON DE FARIAS", "data": "2026-07-20"}, {"unidade": "GPA CD2", "tipo": "Desligamento", "colaborador": "RYAN YURI MIGUEL", "data": "2026-07-06"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "ALEX SANDRO CARDOSO  DOS SANTOS", "data": "2026-07-02"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "WALISON DA SILVA SANTOS", "data": "2026-07-14"}, {"unidade": "GPA CD2", "tipo": "Desligamento", "colaborador": "WALISON DA SILVA SANTOS", "data": "2026-07-17"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "RENATO AUGUSTO DE SOUZA", "data": "2026-07-22"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "JORGE WASHINGTON MAIA", "data": "2026-07-22"}, {"unidade": "GPA CD2", "tipo": "Desligamento", "colaborador": "GILDEVAN CAMPOS SANTANA", "data": "2026-07-03"}, {"unidade": "GPA CD2", "tipo": "Desligamento", "colaborador": "MATHEUS DE OLIVEIRA", "data": "2026-07-28"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "BRAYAN WILLIAN PEREIRA", "data": "2026-07-02"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "MARCOS SILVA QUEIROS", "data": "2026-07-02"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "FELIPE CARDOSO DE ALMEIDA", "data": "2026-07-02"}, {"unidade": "GPA CD2", "tipo": "Desligamento", "colaborador": "FELIPE CARDOSO DE ALMEIDA", "data": "2026-07-28"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "IGOR MOITINHO OLIVEIRA", "data": "2026-07-14"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "VICTOR ALVES DE SOUZA", "data": "2026-07-14"}, {"unidade": "GPA CD2", "tipo": "Admissão", "colaborador": "CAIO GABRIEL JESUS DA SILVA", "data": "2026-07-14"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "ANTONIO MARCOS DA SILVA SANTOS", "data": "2026-07-01"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "CLEITON GOMES DA SILVA", "data": "2026-07-10"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "ERICK ALUISIO DOS SANTOS", "data": "2026-07-06"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "JOSE PINTO ALFREDO", "data": "2026-07-16"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "KEVIN OLIVEIRA FRANCA", "data": "2026-07-08"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "LUCAS DA SILVA BRASIL", "data": "2026-07-10"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "JOAB RAVELE DA CONCEIÇÃO SANTANA", "data": "2026-07-27"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "ANTONIO LEANDRO DA SILVA MELO FILHO", "data": "2026-07-07"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "CHINONSO CHRISTIAN NWEZEH", "data": "2026-07-16"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "GABRIEL ERICK ROJO SILVA", "data": "2026-07-16"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "JORLEANO RODRIGUES DE OLIVEIRA", "data": "2026-07-23"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "KAUA HENRIQUE MARQUES DA SILVA", "data": "2026-07-16"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "LUCIANO SOARES DA SILVA", "data": "2026-07-16"}, {"unidade": "GPA CD4", "tipo": "Desligamento", "colaborador": "VICTOR HUGO DE OLIVEIRA JUNIOR", "data": "2026-07-22"}];
 const PRODUCAO_DADOS = [{"unidade": "GPA CD1", "real": 915677, "meta": 1524600}, {"unidade": "GPA CD2", "real": 222769, "meta": 191900}, {"unidade": "GPA CD4", "real": 511308, "meta": 667150}];
 const MEDIA_CAIXA_HD = {"GPA CD1": 360, "GPA CD2": 479, "GPA CD4": 422};
@@ -1082,6 +1186,8 @@ const STATUS_META = {
   TRANSF: {label:'Transferência',           css:'st-TRANSF'},
 };
 
+const RH_DADOS = [{"unidade":"GPA CD1","nome":"ADENILTON DA SILVA DAMASCENO","dias":266},{"unidade":"GPA CD1","nome":"ADILSON SANTOS DE JESUS","dias":100},{"unidade":"GPA CD1","nome":"ALBERT FELIPE PEREIRA KURTHY","dias":226},{"unidade":"GPA CD1","nome":"ALESSANDRO DE MIRANDA LAUREANO","dias":163},{"unidade":"GPA CD1","nome":"ALEXSANDER PEREIRA MOTA","dias":137},{"unidade":"GPA CD1","nome":"ANA PAULA PEREIRA ALI ASI","dias":94},{"unidade":"GPA CD1","nome":"ANDERSON NASCIMENTO DE ARAUJO","dias":210},{"unidade":"GPA CD1","nome":"ANDERSON PINTO PERNOMIAN","dias":135},{"unidade":"GPA CD1","nome":"ANDRE LUCAS DA SILVA","dias":161},{"unidade":"GPA CD1","nome":"ANDRE LUIZ NOGUEIRA FELICIANO","dias":133},{"unidade":"GPA CD1","nome":"ANDRESSA PEREIRA DE AMORIM","dias":241},{"unidade":"GPA CD1","nome":"ANNY VICTORIA LISBOA DOS SANTOS","dias":245},{"unidade":"GPA CD1","nome":"ANTONIO FERREIRA DA SILVA","dias":152},{"unidade":"GPA CD1","nome":"BONIFACIO GOMES","dias":147},{"unidade":"GPA CD1","nome":"BRUNO GONÇALVES SILVANO","dias":219},{"unidade":"GPA CD1","nome":"BRUNO HENRIQUE RODIRGUES DE OLIVEIRA","dias":242},{"unidade":"GPA CD1","nome":"BRUNO MARTINS MARINHO","dias":21},{"unidade":"GPA CD1","nome":"CAIQUE MENDONCA PEREIRA","dias":164},{"unidade":"GPA CD1","nome":"CAUAN RODRIGUES DE MENEZES","dias":253},{"unidade":"GPA CD1","nome":"CHETACHUKWU JOHN NWIBE","dias":220},{"unidade":"GPA CD1","nome":"CIBELLE BATISTA NASCIMENTO","dias":267},{"unidade":"GPA CD1","nome":"CLAYTON COSME DA SILVA AVELINO","dias":112},{"unidade":"GPA CD1","nome":"CRISTHIAN LUCAS DE CARVALHO ALVES","dias":219},{"unidade":"GPA CD1","nome":"CRISTIANO ARISTIDES DOS SANTOS IZIDRO","dias":259},{"unidade":"GPA CD1","nome":"DANIEL AUGUSTO OLIVEIRA BARRETO","dias":226},{"unidade":"GPA CD1","nome":"DANIEL MARKI BARRETO","dias":45},{"unidade":"GPA CD1","nome":"DANILO CORREIA CAMPOS","dias":198},{"unidade":"GPA CD1","nome":"DARIO NOVAES DIAS","dias":227},{"unidade":"GPA CD1","nome":"DELIENE GOMES SANTOS","dias":245},{"unidade":"GPA CD1","nome":"DIEGO PACHECO TEIXEIRA","dias":238},{"unidade":"GPA CD1","nome":"DIOGO GRACILIANO MAIA","dias":261},{"unidade":"GPA CD1","nome":"DOUGLAS JESUS ALVES DA COSTA","dias":227},{"unidade":"GPA CD1","nome":"EBUKA AUSTINE OZOAGU","dias":149},{"unidade":"GPA CD1","nome":"EDER HENRIQUE DA SILVA","dias":191},{"unidade":"GPA CD1","nome":"EDGAR SANTANA DUARTE","dias":203},{"unidade":"GPA CD1","nome":"EDILIO NUNES BATISTA","dias":140},{"unidade":"GPA CD1","nome":"EDIMAR ALMEIDA MOTA","dias":136},{"unidade":"GPA CD1","nome":"EMERSON SILVA OLIVEIRA","dias":259},{"unidade":"GPA CD1","nome":"ERICA NUNES DA SILVA","dias":265},{"unidade":"GPA CD1","nome":"ERICK VINICIUS DO NASCIMENTO FEITOSA","dias":142},{"unidade":"GPA CD1","nome":"FABIANO DOS SANTOS","dias":164},{"unidade":"GPA CD1","nome":"FABIANO SILVA RODRIGUES DE MOURA","dias":184},{"unidade":"GPA CD1","nome":"FABIO LUIZ RIBEIRO DA SILVA","dias":255},{"unidade":"GPA CD1","nome":"FABRICE ABANDA MBAH","dias":233},{"unidade":"GPA CD1","nome":"FELIPE DOS SANTOS SILVA","dias":245},{"unidade":"GPA CD1","nome":"FELIPE GOES SABINO","dias":219},{"unidade":"GPA CD1","nome":"FELIPE RAFAEL BENTO MARQUES","dias":265},{"unidade":"GPA CD1","nome":"FRANKLIN GUSTAVO LUIZ GONZAGA","dias":175},{"unidade":"GPA CD1","nome":"GABRIELLE ROSARIO DOS SANTOS","dias":267},{"unidade":"GPA CD1","nome":"GABRIEL LUIS BARROS DO NASCIMENTO","dias":107},{"unidade":"GPA CD1","nome":"GABRIEL MARCOLINO DE ANDRADE LAMANERES","dias":189},{"unidade":"GPA CD1","nome":"GENIVALDO DA SILVA SANTOS","dias":253},{"unidade":"GPA CD1","nome":"GRAZIELLY SILVA RODRIGUES","dias":241},{"unidade":"GPA CD1","nome":"GUILHERME SAMUEL GRILO DA SILVA","dias":261},{"unidade":"GPA CD1","nome":"GUSTAVO MENDES DOS ANJOS","dias":198},{"unidade":"GPA CD1","nome":"HELCIO CECCHETTO NETTO","dias":261},{"unidade":"GPA CD1","nome":"HIAGO GOMES DOS SANTOS","dias":36},{"unidade":"GPA CD1","nome":"HIGOR MEDEIROS DE OLIVEIRA","dias":98},{"unidade":"GPA CD1","nome":"HUGO LEONARDO DA SILVA FLOR","dias":115},{"unidade":"GPA CD1","nome":"IGOR DOS SANTOS CARMO","dias":143},{"unidade":"GPA CD1","nome":"IGOR FERNANDO ESTEVAO DA SILVA","dias":219},{"unidade":"GPA CD1","nome":"IGOR RODRIGUES DE SOUZA OLIVEIRA","dias":182},{"unidade":"GPA CD1","nome":"IKECHUKWU CHINKWE","dias":233},{"unidade":"GPA CD1","nome":"ISABELA DE OLIVEIRA","dias":241},{"unidade":"GPA CD1","nome":"ISMAEL MENDES DOS SANTOS","dias":112},{"unidade":"GPA CD1","nome":"IVA ELLEN DA SILVA FERREIRA","dias":265},{"unidade":"GPA CD1","nome":"JACKSON LOPES DE FRANCA","dias":182},{"unidade":"GPA CD1","nome":"JAINE DE JESUS SANTOS","dias":261},{"unidade":"GPA CD1","nome":"JAMES WILLY CARDOSO DA SILVA","dias":112},{"unidade":"GPA CD1","nome":"JAQUELINE DEL REI VARGAS SILVA","dias":252},{"unidade":"GPA CD1","nome":"JAQUELINE DE OLIVEIRA COIMBRA","dias":261},{"unidade":"GPA CD1","nome":"JEFERSON FERREIRA SENA","dias":184},{"unidade":"GPA CD1","nome":"JHONATA BORGES OLIVEIRA","dias":191},{"unidade":"GPA CD1","nome":"JHONNY MANOEL SANTOS DA SILVA","dias":240},{"unidade":"GPA CD1","nome":"JOAO RICARDO DA SILVA CARDOSO","dias":161},{"unidade":"GPA CD1","nome":"JOAO VICTOR CHAVES GUEDES","dias":71},{"unidade":"GPA CD1","nome":"JOÃO VICTOR DA SILVA FELIX","dias":157},{"unidade":"GPA CD1","nome":"JOEL MITSRAEL MALQUI NOGALES","dias":10},{"unidade":"GPA CD1","nome":"JOHN EBERE IWUNZE","dias":224},{"unidade":"GPA CD1","nome":"JONAS GABRIEL DE PAULA AMADEO","dias":240},{"unidade":"GPA CD1","nome":"JOSE ENRIQUE OLIVARES CUENCA","dias":252},{"unidade":"GPA CD1","nome":"JULYANE MONTEIRA ARANHA","dias":240},{"unidade":"GPA CD1","nome":"KAIQUE SOUZA FERREIRA","dias":182},{"unidade":"GPA CD1","nome":"KALINE DA SILVA ALENCAR","dias":252},{"unidade":"GPA CD1","nome":"KAMILY ROCHA SILVA","dias":252},{"unidade":"GPA CD1","nome":"KATHLEEN MARCELY ALVES DOS SANTOS","dias":36},{"unidade":"GPA CD1","nome":"KATIA SIMONE PEREIRA FERNANDES","dias":241},{"unidade":"GPA CD1","nome":"KAUAN DIONIZIO ARAGAO DA SILVA","dias":253},{"unidade":"GPA CD1","nome":"KAUE IGOR NASCIMENTO DE OLIVEIRA","dias":253},{"unidade":"GPA CD1","nome":"KETLIN DA SILVA ALENCAR","dias":266},{"unidade":"GPA CD1","nome":"LEANDRO NOVAIS","dias":238},{"unidade":"GPA CD1","nome":"LEANDRO ROBERTO GONÇALVES","dias":184},{"unidade":"GPA CD1","nome":"LEONARDO DOS SANTOS RICO","dias":261},{"unidade":"GPA CD1","nome":"LUAN DUVAIZAN","dias":238},{"unidade":"GPA CD1","nome":"LUCAIAN SANTOS ATAIDE","dias":49},{"unidade":"GPA CD1","nome":"LUCAS CORREIA DA SILVA","dias":240},{"unidade":"GPA CD1","nome":"LUCAS DOS SANTOS BARROZO MATIAS","dias":220},{"unidade":"GPA CD1","nome":"LUCAS RAYLAN DA SILVA MOURA","dias":242},{"unidade":"GPA CD1","nome":"LUCAS RIBEIRO DA SILVA","dias":155},{"unidade":"GPA CD1","nome":"LUIS HENRIQUE DOS SANTOS","dias":77},{"unidade":"GPA CD1","nome":"MAGNO QUINTO E LEMOS","dias":205},{"unidade":"GPA CD1","nome":"MAICON RYAN OLIVEIRA SANTOS","dias":161},{"unidade":"GPA CD1","nome":"MANOEL NETO ALMEIDA BARRETO","dias":252},{"unidade":"GPA CD1","nome":"MARCELO MIGUEL TORRES","dias":184},{"unidade":"GPA CD1","nome":"MARCIO FERREIRA ALVES","dias":261},{"unidade":"GPA CD1","nome":"MARCOS ALVES FERREIRA","dias":245},{"unidade":"GPA CD1","nome":"MARCOS CARVALHO DE OLIVEIRA","dias":149},{"unidade":"GPA CD1","nome":"MARCOS LEANDRO FAVORINO DA SILVA","dias":240},{"unidade":"GPA CD1","nome":"MARCOS ROBERTO DE OLIVEIRA","dias":191},{"unidade":"GPA CD1","nome":"MARIANY NASCIMENTO MONTEIRO","dias":241},{"unidade":"GPA CD1","nome":"MARIA RIZONIA PEREIRA LINS","dias":261},{"unidade":"GPA CD1","nome":"MARIVAN NUNES DE OLIVEIRA","dias":220},{"unidade":"GPA CD1","nome":"MARLOFRAN SILVA RODRIGUES","dias":100},{"unidade":"GPA CD1","nome":"MATEUS FARIA MEDEIROS","dias":87},{"unidade":"GPA CD1","nome":"MAURICIO SOARES PADUN","dias":233},{"unidade":"GPA CD1","nome":"MAXUEL PEREIRA MARTINS","dias":205},{"unidade":"GPA CD1","nome":"MAYARA DE FATIMA GONCALVES","dias":261},{"unidade":"GPA CD1","nome":"MBALA MOREINO","dias":198},{"unidade":"GPA CD1","nome":"MICHEL DA SILVA OLIVEIRA","dias":141},{"unidade":"GPA CD1","nome":"MILCA PAULA MIGUEL JAIME","dias":151},{"unidade":"GPA CD1","nome":"NAYARA CRISTINA IACHITZKI BRITO","dias":266},{"unidade":"GPA CD1","nome":"NAYARA VARGAS","dias":245},{"unidade":"GPA CD1","nome":"OZICHUKWU ENEMCHUKWU EZEAGU","dias":220},{"unidade":"GPA CD1","nome":"OZOANIJI OBINNA PASCHAL","dias":219},{"unidade":"GPA CD1","nome":"PABLO DOMINGOS RODRIGUES","dias":77},{"unidade":"GPA CD1","nome":"PATRICIA RODRIGUES BEZERRA","dias":151},{"unidade":"GPA CD1","nome":"PAULO CESAR DE FREITAS","dias":267},{"unidade":"GPA CD1","nome":"PAULO HENRIQUE CARVALHO DE SOUZA","dias":182},{"unidade":"GPA CD1","nome":"PAULO HENRIQUE MACHADO VIEIRA","dias":10},{"unidade":"GPA CD1","nome":"PRISCILA VIEIRA FRANCO DOS SANTOS","dias":267},{"unidade":"GPA CD1","nome":"RAFAELA FERREIRA GARCIA PINTO","dias":253},{"unidade":"GPA CD1","nome":"RAFAEL ALVES SILVA","dias":259},{"unidade":"GPA CD1","nome":"RAFAEL AUGUSTO FIUZA","dias":233},{"unidade":"GPA CD1","nome":"RAFAEL COSTA DUARTE","dias":255},{"unidade":"GPA CD1","nome":"RAYANE DEBORA DA SILVA","dias":132},{"unidade":"GPA CD1","nome":"REINALDO DE SOUSA BRITO","dias":219},{"unidade":"GPA CD1","nome":"RICARDO CARVALHO MOREIRA DOS SANTOS","dias":77},{"unidade":"GPA CD1","nome":"RICARDO GONÇALVES ALEXANDRINO LEITE","dias":164},{"unidade":"GPA CD1","nome":"RICHARD MIKEIAS CIPRIANO DUARTE","dias":252},{"unidade":"GPA CD1","nome":"RODOLFO MARTINS BENTO DE SOUZA","dias":253},{"unidade":"GPA CD1","nome":"RONALD GOMES DA SILVA","dias":255},{"unidade":"GPA CD1","nome":"RONALDO DA COSTA PALERMO","dias":267},{"unidade":"GPA CD1","nome":"SABRINA ALVES AMARAL DOS SANTOS","dias":261},{"unidade":"GPA CD1","nome":"SABRINA SILVA GOMES","dias":267},{"unidade":"GPA CD1","nome":"SERGIO DE JESUS","dias":100},{"unidade":"GPA CD1","nome":"SILMARA DE ARAUJO COSTA","dias":182},{"unidade":"GPA CD1","nome":"SOCRATES NUNES MARINHO","dias":219},{"unidade":"GPA CD1","nome":"SUSY LOURRANE ALVES DOS SANTOS","dias":253},{"unidade":"GPA CD1","nome":"TAILSON OLIVEIRA BRITO","dias":191},{"unidade":"GPA CD1","nome":"TARCISIO MOREIRA GODOI","dias":189},{"unidade":"GPA CD1","nome":"THAMIRES DE PAIVA SOARES ANTUNES","dias":221},{"unidade":"GPA CD1","nome":"THIAGO HENRIQUE SILVA","dias":-1},{"unidade":"GPA CD1","nome":"THIAGO SANCHEZ DE PAULA","dias":77},{"unidade":"GPA CD1","nome":"THIAGO VIANA DE SOUSA","dias":227},{"unidade":"GPA CD1","nome":"UBIRAJARA DA SILVA NUNES LOPES","dias":240},{"unidade":"GPA CD1","nome":"UCHENNA KINSGLEY EGBO","dias":175},{"unidade":"GPA CD1","nome":"VALMIR CRISTIANO OLIVEIRA","dias":191},{"unidade":"GPA CD1","nome":"VANDERLEY SOUZA ALMEIDA","dias":191},{"unidade":"GPA CD1","nome":"VINICIUS DOS ANJOS RIBEIRO","dias":233},{"unidade":"GPA CD1","nome":"VINICIUS FERREIRA DA SILVA","dias":240},{"unidade":"GPA CD1","nome":"VINICIUS MATHEUS DOS SANTOS","dias":266},{"unidade":"GPA CD1","nome":"VITORIA RAFAEL E SILVA","dias":240},{"unidade":"GPA CD1","nome":"WALISON MATIAS DA SILVA","dias":265},{"unidade":"GPA CD1","nome":"WALLACY PEREIRA DA SILVA","dias":245},{"unidade":"GPA CD1","nome":"WALTER FERNANDO SCHIAVINATO NETO","dias":140},{"unidade":"GPA CD1","nome":"WANDERSON CARDOSO DE MORAIS SILVA","dias":233},{"unidade":"GPA CD1","nome":"WANDERSON SODRE","dias":24},{"unidade":"GPA CD1","nome":"WELLINGTON LOPES ELIAS PEREIRA","dias":221},{"unidade":"GPA CD1","nome":"WENDELL BARBOSA DOS SANTOS","dias":266},{"unidade":"GPA CD1","nome":"WESLEY HENRIQUE RIBEIRO BONDEZZAN","dias":253},{"unidade":"GPA CD1","nome":"WESLEY THAILITON ANDRADE","dias":224},{"unidade":"GPA CD1","nome":"WILDMA MEDRADO SILVA","dias":259},{"unidade":"GPA CD1","nome":"WILIAS MARQUES DE OLIVEIRA","dias":157},{"unidade":"GPA CD1","nome":"WILLIAN DA SILVA SOUZA","dias":227},{"unidade":"GPA CD2","nome":"ALESSANDRO FARIAS DA SILVA","dias":64},{"unidade":"GPA CD2","nome":"JAILSON DE SOUZA CORREA","dias":64},{"unidade":"GPA CD2","nome":"VICTOR GABRIEL CASTRO DA CRUZ","dias":73},{"unidade":"GPA CD2","nome":"JHONATAN TEODORO DA SILVA","dias":252},{"unidade":"GPA CD2","nome":"THALLES ISRAEL SILVA ARAUJO","dias":252},{"unidade":"GPA CD2","nome":"FAGNER JOSE DA SILVA","dias":254},{"unidade":"GPA CD2","nome":"JONAS DE MOURA AMARAL","dias":254},{"unidade":"GPA CD2","nome":"CARLOS EDUARDO RODRIGUES","dias":254},{"unidade":"GPA CD2","nome":"RENAN DIAS BARBOSA DOS SANTOS","dias":111},{"unidade":"GPA CD2","nome":"ALEX SANDRO CARDOSO  DOS SANTOS","dias":240},{"unidade":"GPA CD2","nome":"EMMANOEL DOS SANTOS SILVA","dias":73},{"unidade":"GPA CD2","nome":"ERIK JULLIAN GONÇALVES","dias":66},{"unidade":"GPA CD2","nome":"GABRIEL RODRIGO LOURENÇO DA SILVA","dias":66},{"unidade":"GPA CD2","nome":"HITALO LIMEIRA BORGES","dias":129},{"unidade":"GPA CD2","nome":"JOAO VITOR SANTOS MARTINS","dias":-1},{"unidade":"GPA CD2","nome":"PEDRO HENRIQUE DA SILVA","dias":83},{"unidade":"GPA CD2","nome":"PEDRO MOREIRA DOS SANTOS","dias":129},{"unidade":"GPA CD2","nome":"VAILSON BRITO SOLIDADE","dias":129},{"unidade":"GPA CD2","nome":"BRAYAN WILLIAN PEREIRA","dias":240},{"unidade":"GPA CD2","nome":"MARCOS SILVA QUEIROS","dias":240},{"unidade":"GPA CD2","nome":"IGOR MOITINHO OLIVEIRA","dias":252},{"unidade":"GPA CD2","nome":"VICTOR ALVES DE SOUZA","dias":252},{"unidade":"GPA CD2","nome":"CAIO GABRIEL JESUS DA SILVA","dias":252},{"unidade":"GPA CD4","nome":"ANDERSON MADEIRA MARQUES","dias":205},{"unidade":"GPA CD4","nome":"ANESON JUNIOR SANTOS SILVA","dias":133},{"unidade":"GPA CD4","nome":"CHRISTOFER ANTUNES SOOMA","dias":213},{"unidade":"GPA CD4","nome":"EVARISTO EDU KUZOLA","dias":73},{"unidade":"GPA CD4","nome":"GABRIEL LUCAS SILVA MACIEL","dias":105},{"unidade":"GPA CD4","nome":"GEREMIAS INGONGE CARLOS","dias":65},{"unidade":"GPA CD4","nome":"JEAN MICHEL LAGUERRE","dias":133},{"unidade":"GPA CD4","nome":"JOSE APARECIDO VIEIRA","dias":142},{"unidade":"GPA CD4","nome":"JOSE RENIEL SILVA FARIAS","dias":23},{"unidade":"GPA CD4","nome":"KAUAN SILVA SANTOS","dias":217},{"unidade":"GPA CD4","nome":"LEONARDO MOIAIA MUACA","dias":127},{"unidade":"GPA CD4","nome":"LUCAS AGNELO DA SILVA ARRAIS","dias":210},{"unidade":"GPA CD4","nome":"MARCELO DA SILVA ALMEIDA","dias":128},{"unidade":"GPA CD4","nome":"PETERSON RODRIGUES SOUZA","dias":133},{"unidade":"GPA CD4","nome":"RAUAN DE LIMA ARCANJO","dias":120},{"unidade":"GPA CD4","nome":"ROBSON MAXIMINO DE MATOS","dias":122},{"unidade":"GPA CD4","nome":"TAYRONI PAPA LIMA","dias":138},{"unidade":"GPA CD4","nome":"ALAN JESUS SILVA","dias":171},{"unidade":"GPA CD4","nome":"ALECIO PEREIRA DA SILVA","dias":210},{"unidade":"GPA CD4","nome":"AUGUSTINE CHISOM JEPHRAM","dias":174},{"unidade":"GPA CD4","nome":"CHIBUIKE GERALD AHUHUEGBULAM","dias":210},{"unidade":"GPA CD4","nome":"CHIDIEBERE EMMANUEL ANI","dias":140},{"unidade":"GPA CD4","nome":"CHIDINDU CHRISTIAN OMEH","dias":154},{"unidade":"GPA CD4","nome":"CHINENYE VICTOR IGBOEMEKA","dias":170},{"unidade":"GPA CD4","nome":"CLOVIS JOSE RODRIGUES DA SILVA","dias":9},{"unidade":"GPA CD4","nome":"COLLINS OZIEGBE ESEBANME","dias":161},{"unidade":"GPA CD4","nome":"DOUGLAS ARIEL LESSA DO ESPIRITO SANTO","dias":154},{"unidade":"GPA CD4","nome":"FELIX CHIKE CHUKWUNETA","dias":164},{"unidade":"GPA CD4","nome":"FORTUNE IKEMEFUNA AWAOGU","dias":163},{"unidade":"GPA CD4","nome":"IGOR SILVA MEIRELES DE SOUZA","dias":65},{"unidade":"GPA CD4","nome":"KENNEDY OBUMNEKE MMADU","dias":147},{"unidade":"GPA CD4","nome":"LIGHT OKECHUKWU AMAKO","dias":154},{"unidade":"GPA CD4","nome":"MAXWELL CHIBUOGWU MOWETE","dias":142},{"unidade":"GPA CD4","nome":"MICHAEL ADEKUNLE AKINDE","dias":156},{"unidade":"GPA CD4","nome":"MICHALEL TOCHUKWU DOMINIC","dias":175},{"unidade":"GPA CD4","nome":"NATANAEL PAULINO DE ALMEIDA","dias":213},{"unidade":"GPA CD4","nome":"OSAZEE BARRY OBASOGIE","dias":150},{"unidade":"GPA CD4","nome":"PASCHAL IZUCHUKWU ODOEMENA","dias":164},{"unidade":"GPA CD4","nome":"RAFAEL FERREIRA DE SOUZA","dias":163},{"unidade":"GPA CD4","nome":"RIAN MARCOS MENDES DA SILVA","dias":161},{"unidade":"GPA CD4","nome":"WISDOM CHIEMEZIE ONUOHA","dias":171},{"unidade":"GPA CD4","nome":"YVES SANTOS DA SILVA","dias":122},{"unidade":"GPA CD4","nome":"ANDERSON DA SILVA COELHO","dias":30},{"unidade":"GPA CD4","nome":"BRUNO FERNANDES DE SANTANA","dias":77},{"unidade":"GPA CD4","nome":"CHRISTIAN CHUKWUEBUKA EKWUEME","dias":11},{"unidade":"GPA CD4","nome":"CHRISTIAN RAFAEL ROQUE FRANCISCO","dias":122},{"unidade":"GPA CD4","nome":"CLERIO ROBERTO SANTOS","dias":171},{"unidade":"GPA CD4","nome":"DANIEL CHUKWUEMEZIE NWABUEZE","dias":171},{"unidade":"GPA CD4","nome":"EBUKA EMMANUEL OKOYE","dias":129},{"unidade":"GPA CD4","nome":"GLEIDSON DOMINGUES ARAUJO","dias":217},{"unidade":"GPA CD4","nome":"IGWE LAZARUS UCHECHUKWU","dias":77},{"unidade":"GPA CD4","nome":"JONATA SENA","dias":30},{"unidade":"GPA CD4","nome":"NZUZI PEDRO","dias":149},{"unidade":"GPA CD4","nome":"RAFAEL ASATO MARTIN DE OLIVEIRA","dias":213},{"unidade":"GPA CD4","nome":"RAYMOND IGHAVONGBE","dias":135},{"unidade":"GPA CD4","nome":"RODRIGO FABIO SANTOS","dias":127},{"unidade":"GPA CD4","nome":"SAMUEL MANCINI FRANCO","dias":210},{"unidade":"GPA CD4","nome":"SIMON OKE ATETE","dias":156}];
+const PROD_IND_DADOS = {"GPA CD1":{"n":199,"buckets":{"lt50":79,"b50_80":49,"b80_100":33,"b100_120":24,"gt120":14},"top10":["GUSTAVO THIAGO PEREIRA RODRIGUES GONCALVES|221","ANDERSON PINTO PERNOMIAN|187","JONATAN AGOSTINHO PEREIRA|152","FABIO LUIZ RIBEIRO DA SILVA|147","RICARDO OLIVEIRA SANTOS|142","FRANKLIN GUSTAVO LUIZ GONZAGA|138","DELIENE GOMES SANTOS|136","MARCIO ROBERTO DE LIMA CASTRO|136","MARIANY NASCIMENTO MONTEIRO|136","JACKSON LOPES DE FRANCA|135"],"bottom10":["SERGIO DE JESUS|15","GUILHERME SOUZA MENDES|14","LUCAS RIBEIRO DA SILVA|14","TAILSON OLIVEIRA BRITO|12","LUCAS DOS SANTOS BARROZO MATIAS|10","LUCAS PEREIRA ARAUJO|9","ANNY VICTORIA LISBOA DOS SANTOS|7","GISLAINE OLIVEIRA DA SILVA|7","ALYSSON VIEIRA DE SANTANA|4","KAUAN DIONIZIO ARAGAO DA SILVA|0"]},"GPA CD2":{"n":34,"buckets":{"lt50":1,"b50_80":5,"b80_100":4,"b100_120":10,"gt120":14},"top10":["GABRIEL ESPINDOLA DA SILVA GOMES|182","VAILSON BRITO SOLIDADE|174","DANILO DAMASCENO DA SILVA|163","ISRAEL MANUEL DA SILVA|157","PEDRO HENRIQUE DA SILVA|154","VINICIUS SILVA CABRAL|152","GABRIEL WHALAS NUNES DE SOUZA|152","EMANUEL DE LUCAS CONCEIÇAO DE SOUSA|143","GILDEVAN CAMPOS SANTANA|142","ERIK JULLIAN GONÇALVES|142"],"bottom10":["JHONY ELBERT SILVA DOS SANTOS|97","ANDERSON DE FARIAS|92","CARLOS DANIEL MATOS SILVA|82","EMMANOEL DOS SANTOS SILVA|81","RICARDO JOSE DA SILVA|78","MATHEUS DE OLIVEIRA|73","VINICIUS DOS SANTOS REZENDE|68","MARCOS VINICIUS FELIX VALIM|64","RYAN YURI MIGUEL|61","MURILO CARVALHO DA SILVA|0"]},"GPA CD4":{"n":74,"buckets":{"lt50":14,"b50_80":33,"b80_100":16,"b100_120":8,"gt120":3},"top10":["ALAN JESUS SILVA|168","PAULO CABRAL|145","CHINENYE VICTOR IGBOEMEKA|137","ROBSON MAXIMINO DE MATOS|120","MAXWELL CHIBUOGWU MOWETE|117","ROCIANO MAKOSSO KISANGI|113","GEREMIAS INGONGE CARLOS|109","LUCAS DA SILVA BRASIL|108","EVARISTO EDU KUZOLA|107","IGOR SILVA MEIRELES DE SOUZA|106"],"bottom10":["DANIEL CHUKWUEMEZIE NWABUEZE|47","CLERIO ROBERTO SANTOS|45","GABRIEL ERICK ROJO SILVA|44","BRUNO FERNANDES DE SANTANA|43","KAUAN SILVA SANTOS|41","LUCIANO SOARES DA SILVA|40","JOSE RENIEL SILVA FARIAS|38","RAFAEL ASATO MARTIN DE OLIVEIRA|37","SAMUEL MANCINI FRANCO|35","CHINONSO CHRISTIAN NWEZEH|29"]}};
 const MES_NUM = {Janeiro:1,Fevereiro:2,Março:3,Abril:4,Maio:5,Junho:6,Julho:7,Agosto:8,Setembro:9,Outubro:10,Novembro:11,Dezembro:12};
 const ANO = 2026;
 
@@ -1768,12 +1874,21 @@ function renderDimensionamento(){
     {lbl:'Unidades Atendidas', val:undsOk, sub:'Atingiram 100% ou mais', cls:'k-green', extra:''},
   ].map(k=>`<div class="kpi ${k.cls}"><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div>${k.extra||''}</div>`).join('');
 
-  // Cards por unidade
+  // Cards por unidade — ordenados por severidade (menor % atendido primeiro),
+  // para que a unidade com maior déficit de quadro apareça em destaque no topo
+  // quando todas as unidades estão sendo comparadas lado a lado.
   const porUnd = {};
   dados.forEach(d=>{ if(!porUnd[d.unidade]) porUnd[d.unidade]={cargos:[]}; porUnd[d.unidade].cargos.push(d); });
   const maxValGlobal = Math.max(...dados.map(d=>Math.max(d.solicitado,d.contratado)), 1);
 
-  const cardsHtml = Object.entries(porUnd).map(([und, info])=>{
+  const undEntries = Object.entries(porUnd).sort((a,b)=>{
+    const sA = a[1].cargos.reduce((x,d)=>x+d.solicitado,0), rA = a[1].cargos.reduce((x,d)=>x+d.contratado,0);
+    const sB = b[1].cargos.reduce((x,d)=>x+d.solicitado,0), rB = b[1].cargos.reduce((x,d)=>x+d.contratado,0);
+    const pA = sA>0 ? rA/sA : 1, pB = sB>0 ? rB/sB : 1;
+    return pA-pB;
+  });
+
+  const cardsHtml = undEntries.map(([und, info])=>{
     const totUS = info.cargos.reduce((a,d)=>a+d.solicitado,0);
     const totUR = info.cargos.reduce((a,d)=>a+d.contratado,0);
 
@@ -1951,6 +2066,192 @@ function statsByCargo(){
     const t = calcTotais(emps, mesDateList(state.mes||MESES[0]));
     return {cargo:cg, ...t};
   });
+}
+
+/* ===== Radar de Contratos Temporarios (C1) ===== */
+function ctrStatusInfo(dias){
+  if(dias<0) return {label:'Vencido', cls:'dim-gap-crit', chipCls:'dim-pct-crit', order:0};
+  if(dias<=15) return {label:'Crítico ≤15d', cls:'dim-gap-crit', chipCls:'dim-pct-crit', order:1};
+  if(dias<=30) return {label:'Atenção ≤30d', cls:'dim-gap-warn', chipCls:'dim-pct-warn', order:2};
+  if(dias<=60) return {label:'Monitorar ≤60d', cls:'dim-gap-warn', chipCls:'dim-pct-ok', order:3};
+  return {label:'Regular', cls:'dim-gap-ok', chipCls:'dim-pct-exc', order:4};
+}
+function renderRadarContratos(){
+  const selU = document.getElementById('ctr-unidade');
+  const selS = document.getElementById('ctr-status');
+  if(!selU.dataset.init){
+    populateSelect(selU, UNIDS, 'Todas');
+    const statusLabels = ['Vencido','Crítico ≤15d','Atenção ≤30d','Monitorar ≤60d','Regular'];
+    populateSelect(selS, statusLabels, 'Todas');
+    selU.dataset.init='1'; selS.dataset.init='1';
+    selU.addEventListener('change', renderRadarContratos);
+    selS.addEventListener('change', renderRadarContratos);
+  }
+  const fu = selU.value, fs = selS.value;
+
+  const total = RH_DADOS.length;
+  const vencidos = RH_DADOS.filter(d=>d.dias<0).length;
+  const criticos = RH_DADOS.filter(d=>d.dias>=0 && d.dias<=15).length;
+  const atencao = RH_DADOS.filter(d=>d.dias>15 && d.dias<=30).length;
+  const monitorar = RH_DADOS.filter(d=>d.dias>30 && d.dias<=60).length;
+
+  document.getElementById('ctr-kpi-row').innerHTML = [
+    {lbl:'Contratos Temporários', val:total, sub:'3 unidades operacionais', cls:'k-indigo'},
+    {lbl:'Já Vencidos', val:vencidos, sub:'Ação imediata / regularização', cls: vencidos>0?'k-red':'k-green'},
+    {lbl:'Vencendo em até 15 dias', val:criticos, sub:'Decisão urgente de renovação', cls: criticos>0?'k-red':'k-green'},
+    {lbl:'Vencendo em 16-30 dias', val:atencao, sub:'Planejar renovação/efetivação', cls:'k-amber'},
+    {lbl:'Vencendo em 31-60 dias', val:monitorar, sub:'Acompanhamento preventivo', cls:'k-blue'},
+  ].map(k=>`<div class="kpi ${k.cls}"><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  let rows = RH_DADOS.filter(d=> !fu || d.unidade===fu );
+  rows = rows.map(d=>({...d, st: ctrStatusInfo(d.dias)}));
+  if(fs) rows = rows.filter(d=>d.st.label===fs);
+  rows.sort((a,b)=>a.dias-b.dias);
+
+  document.getElementById('ctr-body').innerHTML = rows.map(d=>`
+    <tr>
+      <td class="tal">${d.nome}</td>
+      <td class="tal">${d.unidade}</td>
+      <td style="font-weight:800;color:${d.dias<0?'#c0392b':d.dias<=15?'#c0392b':d.dias<=30?'#d4930a':'#1a3a6e'}">${d.dias<0?'Vencido há '+Math.abs(d.dias)+'d':d.dias+'d'}</td>
+      <td><span class="dim-card-gap-badge ${d.st.cls}" style="font-size:11px;padding:3px 10px">${d.st.label}</span></td>
+    </tr>`).join('') || '<tr><td colspan="4" style="padding:20px;text-align:center;color:var(--tx-muted)">Nenhum contrato encontrado para os filtros selecionados</td></tr>';
+}
+
+/* ===== Produtividade Individual (A1+A2+E1) ===== */
+function piPct(str){ return parseInt(str.split('|')[1],10); }
+function piName(str){ return str.split('|')[0]; }
+function renderProdutividadeIndividual(){
+  const selU = document.getElementById('pi-unidade');
+  if(!selU.dataset.init){
+    populateSelect(selU, UNIDS, 'Todas');
+    selU.dataset.init='1';
+    selU.addEventListener('change', renderProdutividadeIndividual);
+  }
+  const fu = selU.value;
+  const unidsList = fu ? [fu] : UNIDS;
+
+  let n=0, lt50=0, b50_80=0, b80_100=0, b100_120=0, gt120=0;
+  let top10=[], bottom10=[];
+  unidsList.forEach(u=>{
+    const d = PROD_IND_DADOS[u];
+    if(!d) return;
+    n += d.n; lt50 += d.buckets.lt50; b50_80 += d.buckets.b50_80; b80_100 += d.buckets.b80_100;
+    b100_120 += d.buckets.b100_120; gt120 += d.buckets.gt120;
+    top10 = top10.concat(d.top10.map(s=>({u, s})));
+    bottom10 = bottom10.concat(d.bottom10.map(s=>({u, s})));
+  });
+  top10.sort((a,b)=>piPct(b.s)-piPct(a.s)); top10 = top10.slice(0,10);
+  bottom10.sort((a,b)=>piPct(a.s)-piPct(b.s)); bottom10 = bottom10.slice(0,10);
+
+  const pctLt50 = n>0 ? Math.round(lt50/n*1000)/10 : 0;
+  const pctGt120 = n>0 ? Math.round(gt120/n*1000)/10 : 0;
+  // unidade com maior % abaixo de 50% da meta = maior risco
+  let maiorRiscoU='-', maiorRiscoPct=-1;
+  UNIDS.forEach(u=>{
+    const d = PROD_IND_DADOS[u]; if(!d || !d.n) return;
+    const p = Math.round(d.buckets.lt50/d.n*1000)/10;
+    if(p>maiorRiscoPct){ maiorRiscoPct=p; maiorRiscoU=u; }
+  });
+
+  document.getElementById('pi-kpi-row').innerHTML = [
+    {lbl:'Colaboradores Avaliados', val:n, sub:'Com apontamento de produção', cls:'k-indigo'},
+    {lbl:'Abaixo de 50% da Meta', val:lt50, sub:pctLt50+'% do total avaliado', cls: pctLt50>25?'k-red':'k-amber'},
+    {lbl:'Acima de 120% da Meta', val:gt120, sub:pctGt120+'% do total avaliado', cls:'k-green'},
+    {lbl:'Unidade com Maior Risco', val:maiorRiscoU.replace('GPA ',''), sub:maiorRiscoPct+'% abaixo de 50% da meta', cls:'k-red'},
+  ].map(k=>`<div class="kpi ${k.cls}"><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  const buckets = [
+    {lbl:'< 50%', val:lt50, color:'#c0392b'},
+    {lbl:'50% - 80%', val:b50_80, color:'#d4930a'},
+    {lbl:'80% - 100%', val:b80_100, color:'#0079C2'},
+    {lbl:'100% - 120%', val:b100_120, color:'#1a8c4e'},
+    {lbl:'> 120%', val:gt120, color:'#084298'},
+  ];
+  const maxB = Math.max(...buckets.map(b=>b.val),1);
+  document.getElementById('pi-buckets').innerHTML = buckets.map(b=>`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+      <div style="width:110px;font-size:12px;font-weight:700;color:var(--tx-secondary)">${b.lbl}</div>
+      <div style="flex:1;background:#F1F5F9;border-radius:6px;height:22px;position:relative">
+        <div style="width:${b.val/maxB*100}%;background:${b.color};height:100%;border-radius:6px;min-width:2px"></div>
+      </div>
+      <div style="width:70px;text-align:right;font-size:13px;font-weight:800;color:${b.color}">${b.val} (${n>0?Math.round(b.val/n*1000)/10:0}%)</div>
+    </div>`).join('');
+
+  document.getElementById('pi-top').innerHTML = top10.map(t=>`
+    <tr><td class="tal">${piName(t.s)} <span style="color:var(--tx-muted);font-size:10px">(${t.u.replace('GPA ','')})</span></td>
+    <td><span class="dim-pct-chip dim-pct-exc" style="font-size:12px;padding:3px 10px">${piPct(t.s)}%</span></td></tr>`).join('');
+  document.getElementById('pi-bottom').innerHTML = bottom10.map(t=>`
+    <tr><td class="tal">${piName(t.s)} <span style="color:var(--tx-muted);font-size:10px">(${t.u.replace('GPA ','')})</span></td>
+    <td><span class="dim-pct-chip dim-pct-crit" style="font-size:12px;padding:3px 10px">${piPct(t.s)}%</span></td></tr>`).join('');
+}
+
+/* ===== Hora Extra (D1) ===== */
+function heHHMMtoHours(str){
+  if(!str) return 0;
+  const p = str.split(':');
+  if(p.length<2) return 0;
+  return (parseInt(p[0],10)||0) + (parseInt(p[1],10)||0)/60;
+}
+function renderHoraExtra(){
+  const selM = document.getElementById('he-mes');
+  if(!selM.dataset.init){
+    selM.innerHTML = MESES.map(m=>`<option value="${m}">${m}</option>`).join('');
+    selM.value = state.mes || MESES[MESES.length-1];
+    selM.dataset.init='1';
+    selM.addEventListener('change', renderHoraExtra);
+  }
+  const mes = selM.value || MESES[MESES.length-1];
+  const mnum = MES_NUM[mes];
+
+  const porUnidade = {};
+  UNIDS.forEach(u=> porUnidade[u] = {ex:0, en:0, colabsSet:new Set()});
+
+  DADOS.forEach(g=>{
+    const u = g.unidade;
+    if(!porUnidade[u]) porUnidade[u] = {ex:0, en:0, colabsSet:new Set()};
+    (g.colaboradores||[]).forEach(c=>{
+      if(!c.he) return;
+      let teve = false;
+      Object.keys(c.he).forEach(iso=>{
+        const mm = parseInt(iso.slice(5,7),10);
+        if(mm !== mnum) return;
+        const reg = c.he[iso];
+        if(reg.ex){ porUnidade[u].ex += heHHMMtoHours(reg.ex); teve = true; }
+        if(reg.en){ porUnidade[u].en += heHHMMtoHours(reg.en); teve = true; }
+      });
+      if(teve) porUnidade[u].colabsSet.add(c.nome);
+    });
+  });
+
+  const rows = UNIDS.map(u=>{
+    const d = porUnidade[u] || {ex:0,en:0,colabsSet:new Set()};
+    const total = d.ex + d.en;
+    const nColabs = d.colabsSet.size;
+    const media = nColabs>0 ? total/nColabs : 0;
+    return {unidade:u, ex:d.ex, en:d.en, total, nColabs, media};
+  }).sort((a,b)=>b.total-a.total);
+
+  const totalGeral = rows.reduce((a,r)=>a+r.total,0);
+  const colabsGeral = rows.reduce((a,r)=>a+r.nColabs,0);
+  const mediaGeral = colabsGeral>0 ? totalGeral/colabsGeral : 0;
+  const piorUnidade = rows[0] ? rows[0].unidade.replace('GPA ','') : '-';
+
+  document.getElementById('he-kpi-row').innerHTML = [
+    {lbl:'Total de Horas Extras', val:Math.round(totalGeral)+'h', sub:mes+'/2026 · 3 unidades', cls:'k-indigo'},
+    {lbl:'Colaboradores com HE', val:colabsGeral, sub:'Registraram hora extra no mês', cls:'k-amber'},
+    {lbl:'Média por Colaborador', val:mediaGeral.toFixed(1)+'h', sub:'Entre os que tiveram HE', cls:'k-blue'},
+    {lbl:'Unidade com Maior Volume', val:piorUnidade, sub:'Maior custo de HE no mês', cls:'k-red'},
+  ].map(k=>`<div class="kpi ${k.cls}"><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  document.getElementById('he-body').innerHTML = rows.map(r=>`
+    <tr>
+      <td class="tuni">${r.unidade}</td>
+      <td>${r.ex.toFixed(1)}</td>
+      <td>${r.en.toFixed(1)}</td>
+      <td style="font-weight:800;color:var(--indigo)">${r.total.toFixed(1)}</td>
+      <td>${r.nColabs}</td>
+      <td>${r.media.toFixed(1)}</td>
+    </tr>`).join('');
 }
 
 function renderCharts(){
@@ -2293,6 +2594,9 @@ function renderAll(){
   renderEvolucao();
   renderMovimentacoes();
   renderResumo();
+  renderRadarContratos();
+  renderProdutividadeIndividual();
+  renderHoraExtra();
 }
 
 function safeInit(fn, label){
