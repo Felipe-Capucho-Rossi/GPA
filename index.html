@@ -1117,12 +1117,36 @@ function weekdayShort(iso){
 }
 function pct1(n){ return (Math.round(n*10)/10).toFixed(1); }
 
+/* ===== Regra de admissao/demissao por mes =====
+   Cada colaborador pode ter dias marcados 'D' (Desligado) em varios meses
+   seguidos apos seu desligamento real, porque o Espelho de Ponto EzPoint
+   continua gerando linhas "Demitido" nos meses seguintes. Sem tratamento,
+   isso faz quem ja saiu em Janeiro continuar aparecendo (marcado D) em
+   todos os meses ate Julho, inflando artificialmente a contagem de
+   desligados mes apos mes.
+   Regra: um colaborador so e considerado ativo em um mes M se o seu
+   primeiro dia com status 'D' (em toda a base) nao for anterior a M. Ou
+   seja: ao virar o mes, quem foi desligado no mes anterior (ou em
+   qualquer mes anterior) deixa de aparecer nas contagens/tabelas. */
+DADOS.forEach(g=>{
+  g.colaboradores.forEach(c=>{
+    let min = null;
+    for(const iso in c.dias){
+      if(c.dias[iso]==='D'){
+        const m = parseInt(iso.slice(5,7),10);
+        if(min===null || m<min) min = m;
+      }
+    }
+    c._firstDMonth = min; // null = nunca desligado na base
+  });
+});
+
 /* ===== Flatten dataset ===== */
 function allEmployees(){
   const out = [];
   DADOS.forEach(grp=>{
     grp.colaboradores.forEach(c=>{
-      out.push({unidade:grp.unidade, turno:grp.turno, nome:c.nome, cargo:c.cargo, funcao:c.funcao||'', dias:c.dias});
+      out.push({unidade:grp.unidade, turno:grp.turno, nome:c.nome, cargo:c.cargo, funcao:c.funcao||'', dias:c.dias, firstDMonth:c._firstDMonth});
     });
   });
   return out;
@@ -1148,10 +1172,15 @@ function matchesFilter(e){
 }
 function filteredEmployees(){ return ALL_EMP.filter(matchesFilter); }
 
-/* ===== Core presence calc (single source of truth) ===== */
+/* ===== Core presence calc (single source of truth) =====
+   dateList sempre pertence a um unico mes (gerado por mesDateList ou um
+   iso isolado) — usamos o mes do primeiro item para aplicar a regra de
+   admissao/demissao: colaborador desligado antes deste mes e ignorado. */
 function calcTotais(emps, dateList){
   let P=0,FJ=0,FI=0,FOLGA=0,FER=0,FERIAS=0,D=0,AT=0,INT=0,AF=0,SUSP=0,TRANSF=0;
+  const monthNum = dateList.length ? parseInt(dateList[0].slice(5,7),10) : null;
   emps.forEach(e=>{
+    if(monthNum!=null && e.firstDMonth!=null && e.firstDMonth<monthNum) return;
     dateList.forEach(iso=>{
       const st = e.dias[iso];
       if(!st) return;
@@ -1277,6 +1306,7 @@ function renderKPIs(){
 
 /* ===== Grade Diária (estrutura/markup idênticos ao Bimbo: mc-p/mc-fj/…, gt-tot, tr-res) ===== */
 function groupFiltered(){
+  const monthNum = MES_NUM[state.mes || MESES[0]];
   return DADOS.map(g=>({
     unidade:g.unidade, turno:g.turno,
     colaboradores: g.colaboradores.filter(c=>{
@@ -1284,6 +1314,7 @@ function groupFiltered(){
       if(state.turno && g.turno!==state.turno) return false;
       if(state.cargo && c.cargo!==state.cargo) return false;
       if(state.funcao && c.funcao!==state.funcao) return false;
+      if(c._firstDMonth!=null && c._firstDMonth<monthNum) return false;
       return true;
     })
   })).filter(g=>g.colaboradores.length>0);
@@ -2187,7 +2218,7 @@ function renderResumo(){
   DADOS.forEach(g=>{
     if(state.unidade && g.unidade!==state.unidade) return;
     if(state.turno && g.turno!==state.turno) return;
-    const emps = g.colaboradores.filter(c=> (!state.cargo || c.cargo===state.cargo) && (!state.funcao || c.funcao===state.funcao)).map(c=>({dias:c.dias}));
+    const emps = g.colaboradores.filter(c=> (!state.cargo || c.cargo===state.cargo) && (!state.funcao || c.funcao===state.funcao)).map(c=>({dias:c.dias, firstDMonth:c._firstDMonth}));
     if(emps.length===0) return;
     const t = calcTotais(emps, mesDateList(state.mes||MESES[0]));
     const faltas = t.FJ+t.FI;
@@ -2281,7 +2312,7 @@ window.__QA__ = function(){
   const t1 = calcTotais(ALL_EMP, dl);
   console.log('Totais gerais (KPI/Grade/Evolução/Resumo devem bater):', t1);
   let sumP=0,sumFJ=0,sumFI=0;
-  DADOS.forEach(g=>{ const t=calcTotais(g.colaboradores.map(c=>({dias:c.dias})), dl); sumP+=t.P; sumFJ+=t.FJ; sumFI+=t.FI; });
+  DADOS.forEach(g=>{ const t=calcTotais(g.colaboradores.map(c=>({dias:c.dias, firstDMonth:c._firstDMonth})), dl); sumP+=t.P; sumFJ+=t.FJ; sumFI+=t.FI; });
   console.log('Soma por grupo (deve bater com total geral):', {sumP,sumFJ,sumFI});
   console.assert(sumP===t1.P && sumFJ===t1.FJ && sumFI===t1.FI, 'INCONSISTÊNCIA ENTRE GRUPOS E TOTAL GERAL');
   const longest = ALL_EMP.reduce((a,b)=> b.nome.length>a.nome.length? b:a);
