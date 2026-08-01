@@ -2452,11 +2452,13 @@ function renderMovimentacoes(){
     selM.addEventListener('change', renderMovimentacoes);
   }
   const fu = selU.value;
-  let evts = PRESENCA_DADOS.filter(p=> !fu || p.unidade===fu);
+  const fm = selM.value;
+  function mesNomeDe(iso){ return Object.keys(MES_NUM).find(k=>MES_NUM[k]===parseInt(iso.split('-')[1],10)) || ''; }
+  let evts = PRESENCA_DADOS.filter(p=> (!fu || p.unidade===fu) && (!fm || mesNomeDe(p.data)===fm) );
   evts = evts.slice().sort((a,b)=> a.data<b.data? -1:1);
 
   const rows = evts.map(ev=>{
-    const mesNome = Object.keys(MES_NUM).find(k=>MES_NUM[k]===parseInt(ev.data.split('-')[1],10)) || '';
+    const mesNome = mesNomeDe(ev.data);
     const isAdm = ev.tipo==='Admissão';
     return `<tr>
       <td class="tuni">${ev.unidade}</td><td class="tal" style="color:#4B5768">${mesNome}</td>
