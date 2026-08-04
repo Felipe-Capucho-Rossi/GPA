@@ -1240,59 +1240,51 @@ img,svg{max-width:100%}
     <div id="sec-graficos-he" style="scroll-margin-top:130px">
       <div class="sec-head"><span class="sec-title">Gráficos de Horas Extras · Gestão HE 50% &amp; 100%</span><div class="sec-line"></div></div>
       <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);margin-bottom:16px">
-        <span style="font-size:11px;color:var(--tx-secondary)">Dados: Espelhos de Ponto EzPoint · Unidade, Mês, Turno, Setor e Cargo: barra superior · eixo secundário (linha) = média de horas extras por colaborador que realizou HE</span>
+        <span style="font-size:11px;color:var(--tx-secondary)">Dados: Espelhos de Ponto EzPoint · Unidade, Turno, Setor e Cargo: barra superior · passe o mouse sobre uma barra para ver a média por colaborador</span>
       </div>
 
-      <div class="dim-section-title"><span></span>Por Unidade<span></span></div>
+      <div class="dim-section-title"><span></span>Visão Geral<span></span></div>
       <div class="g2">
         <div class="chart-card">
-          <div class="chart-head"><div class="chart-title">Horas Extras a 50% por Unidade</div><div class="chart-sub">Total de horas (barras) × média por colaborador (linha, eixo secundário)</div></div>
+          <div class="chart-head"><div class="chart-title">Composição HE 50% × HE 100%</div><div class="chart-sub">Proporção do total de horas extras no mês filtrado</div></div>
           <div class="chart-divider"></div>
-          <div class="chart-body"><div class="ch"><canvas id="chart-he50-unidade"></canvas></div></div>
+          <div class="chart-body"><div class="ch-donut"><canvas id="chart-he-donut"></canvas><div class="donut-center-lbl" id="he-donut-lbl"></div></div>
+            <div class="donut-legend" id="he-donut-legend"></div>
+          </div>
         </div>
         <div class="chart-card">
-          <div class="chart-head"><div class="chart-title">Horas Extras a 100% por Unidade</div><div class="chart-sub">Total de horas (barras) × média por colaborador (linha, eixo secundário)</div></div>
+          <div class="chart-head"><div class="chart-title">Evolução de Horas Extras</div><div class="chart-sub">Jan a Jul/2026 · não muda com o filtro de Mês (mostra a série completa)</div></div>
           <div class="chart-divider"></div>
-          <div class="chart-body"><div class="ch"><canvas id="chart-he100-unidade"></canvas></div></div>
+          <div class="chart-body"><div class="ch"><canvas id="chart-he-evolucao"></canvas></div></div>
         </div>
       </div>
 
-      <div class="dim-section-title"><span></span>Por Turno<span></span></div>
+      <div class="dim-section-title"><span></span>Por Unidade &amp; Turno<span></span></div>
       <div class="g2">
         <div class="chart-card">
-          <div class="chart-head"><div class="chart-title">Horas Extras a 50% por Turno</div><div class="chart-sub">Total de horas (barras) × média por colaborador (linha, eixo secundário)</div></div>
+          <div class="chart-head"><div class="chart-title">Horas Extras por Unidade</div><div class="chart-sub">HE 50% + HE 100% empilhadas · mês filtrado</div></div>
           <div class="chart-divider"></div>
-          <div class="chart-body"><div class="ch"><canvas id="chart-he50-turno"></canvas></div></div>
+          <div class="chart-body"><div class="ch"><canvas id="chart-he-unidade"></canvas></div></div>
         </div>
         <div class="chart-card">
-          <div class="chart-head"><div class="chart-title">Horas Extras a 100% por Turno</div><div class="chart-sub">Total de horas (barras) × média por colaborador (linha, eixo secundário)</div></div>
+          <div class="chart-head"><div class="chart-title">Horas Extras por Turno</div><div class="chart-sub">HE 50% + HE 100% empilhadas · mês filtrado</div></div>
           <div class="chart-divider"></div>
-          <div class="chart-body"><div class="ch"><canvas id="chart-he100-turno"></canvas></div></div>
+          <div class="chart-body"><div class="ch"><canvas id="chart-he-turno"></canvas></div></div>
         </div>
       </div>
 
       <div class="dim-section-title"><span></span>Por Setor<span></span></div>
       <div class="chart-card">
-        <div class="chart-head"><div class="chart-title">Horas Extras a 50% por Setor</div><div class="chart-sub" id="he50-setor-sub">Total de horas (barras) × média por colaborador (linha, eixo secundário) · ordenado por total</div></div>
+        <div class="chart-head"><div class="chart-title">Horas Extras por Setor</div><div class="chart-sub" id="he-setor-sub">HE 50% + HE 100% empilhadas · ordenado por total</div></div>
         <div class="chart-divider"></div>
-        <div class="chart-body"><div class="ch ch-hbar" id="ch-he50-setor-wrap"><canvas id="chart-he50-setor"></canvas></div></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-head"><div class="chart-title">Horas Extras a 100% por Setor</div><div class="chart-sub" id="he100-setor-sub">Total de horas (barras) × média por colaborador (linha, eixo secundário) · ordenado por total</div></div>
-        <div class="chart-divider"></div>
-        <div class="chart-body"><div class="ch ch-hbar" id="ch-he100-setor-wrap"><canvas id="chart-he100-setor"></canvas></div></div>
+        <div class="chart-body"><div class="ch ch-hbar" id="ch-he-setor-wrap"><canvas id="chart-he-setor"></canvas></div></div>
       </div>
 
       <div class="dim-section-title"><span></span>Por Cargo<span></span></div>
       <div class="chart-card">
-        <div class="chart-head"><div class="chart-title">Horas Extras a 50% por Cargo</div><div class="chart-sub" id="he50-cargo-sub">Total de horas (barras) × média por colaborador (linha, eixo secundário) · ordenado por total</div></div>
+        <div class="chart-head"><div class="chart-title">Horas Extras por Cargo</div><div class="chart-sub" id="he-cargo-sub">HE 50% + HE 100% empilhadas · ordenado por total</div></div>
         <div class="chart-divider"></div>
-        <div class="chart-body"><div class="ch ch-hbar" id="ch-he50-cargo-wrap"><canvas id="chart-he50-cargo"></canvas></div></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-head"><div class="chart-title">Horas Extras a 100% por Cargo</div><div class="chart-sub" id="he100-cargo-sub">Total de horas (barras) × média por colaborador (linha, eixo secundário) · ordenado por total</div></div>
-        <div class="chart-divider"></div>
-        <div class="chart-body"><div class="ch ch-hbar" id="ch-he100-cargo-wrap"><canvas id="chart-he100-cargo"></canvas></div></div>
+        <div class="chart-body"><div class="ch ch-hbar" id="ch-he-cargo-wrap"><canvas id="chart-he-cargo"></canvas></div></div>
       </div>
     </div>
 
@@ -2279,37 +2271,62 @@ function optBarsH(maxX, suf){
   };
 }
 
-/* Opções para gráficos com EIXO SECUNDÁRIO (barras no eixo esquerdo "y" +
-   linha no eixo direito "y1") — mesma paleta/tipografia de optBars(), só
-   acrescentando a segunda escala. Usado nos gráficos de Gestão de Horas
-   Extras (total em barras × média por colaborador em linha). */
-function optBarsSec(y1Label){
+/* Barras EMPILHADAS (stacked) — usadas nos gráficos de Horas Extras por
+   Unidade/Turno/Setor/Cargo. Substituem o antigo design de barra + linha em
+   eixo secundário (2 gráficos por dimensão, um para HE 50% e outro para HE
+   100%), que ficava visualmente poluído: eixo duplo, linha de média cortando
+   as barras, e o dobro de gráficos quase idênticos lado a lado. Agora é 1
+   gráfico por dimensão — cada barra já mostra o total (soma dos dois
+   segmentos empilhados). A média por colaborador continua acessível, só que
+   no tooltip (ver ds.avgData) em vez de uma linha permanente no gráfico. */
+function optBarsStacked(){
+  return {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:true, position:'bottom', labels:{font:{size:11,family:'Inter'}, boxWidth:12, usePointStyle:true, color:'#4B5768'}},
+      tooltip:{bodyFont:{family:'Inter'}, callbacks:{
+        label:ctx=>{
+          const avg = ctx.dataset.avgData ? ctx.dataset.avgData[ctx.dataIndex] : null;
+          const base = ctx.dataset.label+': '+hoursToHHMM(ctx.parsed.y)+'h';
+          return avg ? base+' · méd. '+hoursToHHMM(avg)+'h/colab' : base;
+        },
+        footer:items=>'Total: '+hoursToHHMM(items.reduce((a,i)=>a+i.parsed.y,0))+'h'
+      } } },
+    scales:{
+      x:{stacked:true, grid:{display:false}, ticks:{color:'#0F1B2D', font:{size:10.5,family:'Inter',weight:'600'}}},
+      y:{stacked:true, beginAtZero:true, grid:{color:'#EEF1F5'}, ticks:{color:'#8FA8C4', font:{size:10}}}
+    }
+  };
+}
+/* Igual a optBarsStacked(), mas HORIZONTAL (indexAxis:'y') — usado em Setor
+   e Cargo, onde há muitas categorias e barras verticais ficariam
+   espremidas/ilegíveis (mesmo raciocínio de optBarsH()). */
+function optBarsHStacked(){
+  return {
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:true, position:'bottom', labels:{font:{size:11,family:'Inter'}, boxWidth:12, usePointStyle:true, color:'#4B5768'}},
+      tooltip:{bodyFont:{family:'Inter'}, callbacks:{
+        label:ctx=>{
+          const avg = ctx.dataset.avgData ? ctx.dataset.avgData[ctx.dataIndex] : null;
+          const base = ctx.dataset.label+': '+hoursToHHMM(ctx.parsed.x)+'h';
+          return avg ? base+' · méd. '+hoursToHHMM(avg)+'h/colab' : base;
+        },
+        footer:items=>'Total: '+hoursToHHMM(items.reduce((a,i)=>a+i.parsed.x,0))+'h'
+      } } },
+    scales:{
+      x:{stacked:true, beginAtZero:true, grid:{color:'#EEF1F5'}, ticks:{color:'#8FA8C4', font:{size:10}}},
+      y:{stacked:true, grid:{display:false}, ticks:{color:'#0F1B2D', font:{size:10.5,family:'Inter',weight:'600'}}}
+    }
+  };
+}
+/* Linha de evolução mensal (Jan-Jul) — mesma paleta/tipografia de optBars(). */
+function optLineTrend(){
   return {
     responsive:true, maintainAspectRatio:false,
     plugins:{ legend:{display:true, position:'bottom', labels:{font:{size:11,family:'Inter'}, boxWidth:12, usePointStyle:true, color:'#4B5768'}},
       tooltip:{bodyFont:{family:'Inter'}, callbacks:{label:ctx=>ctx.dataset.label+': '+hoursToHHMM(ctx.parsed.y)+'h'}} },
     scales:{
       x:{grid:{display:false}, ticks:{color:'#0F1B2D', font:{size:10.5,family:'Inter',weight:'600'}}},
-      y:{beginAtZero:true, position:'left', grid:{color:'#EEF1F5'}, ticks:{color:'#8FA8C4', font:{size:10}}, title:{display:true, text:'Total (h)', color:'#8FA8C4', font:{size:10.5,family:'Inter',weight:'600'}}},
-      y1:{beginAtZero:true, position:'right', grid:{display:false}, ticks:{color:'#8FA8C4', font:{size:10}}, title:{display:true, text: y1Label||'Média por colaborador (h)', color:'#8FA8C4', font:{size:10.5,family:'Inter',weight:'600'}}}
-    }
-  };
-}
-/* Igual a optBarsSec(), mas para gráficos HORIZONTAIS (indexAxis:'y') — usado
-   em Setor e Cargo, onde há muitas categorias e barras verticais ficariam
-   ilegíveis (mesmo raciocínio de optBarsH()). Com indexAxis:'y' o eixo de
-   CATEGORIA é o "y" e os eixos de VALOR viram "x" (total, embaixo) e "x1"
-   (média por colaborador, em cima) — mesma barra+linha com eixo secundário,
-   só que na horizontal. */
-function optBarsHSec(x1Label){
-  return {
-    indexAxis:'y', responsive:true, maintainAspectRatio:false,
-    plugins:{ legend:{display:true, position:'bottom', labels:{font:{size:11,family:'Inter'}, boxWidth:12, usePointStyle:true, color:'#4B5768'}},
-      tooltip:{bodyFont:{family:'Inter'}, callbacks:{label:ctx=>ctx.dataset.label+': '+hoursToHHMM(ctx.parsed.x)+'h'}} },
-    scales:{
-      x:{beginAtZero:true, position:'bottom', grid:{color:'#EEF1F5'}, ticks:{color:'#8FA8C4', font:{size:10}}, title:{display:true, text:'Total (h)', color:'#8FA8C4', font:{size:10.5,family:'Inter',weight:'600'}}},
-      x1:{beginAtZero:true, position:'top', grid:{display:false}, ticks:{color:'#8FA8C4', font:{size:10}}, title:{display:true, text: x1Label||'Média por colaborador (h)', color:'#8FA8C4', font:{size:10.5,family:'Inter',weight:'600'}}},
-      y:{grid:{display:false}, ticks:{color:'#0F1B2D', font:{size:10.5,family:'Inter',weight:'600'}}}
+      y:{beginAtZero:true, grid:{color:'#EEF1F5'}, ticks:{color:'#8FA8C4', font:{size:10}}}
     }
   };
 }
@@ -2772,84 +2789,105 @@ function statsByFuncaoHE(mnum){
     && (!state.cargo||emp.setor===state.cargo)) }));
 }
 
-/* Constrói um par de gráficos (HE 50% / HE 100%) verticais com eixo
-   secundário, para dimensões com poucas categorias (Unidade, Turno). */
-function buildHEChartPairVertical(idPrefix, canvasIdHE5, canvasIdHE1, labels, stats){
-  destroyChart(idPrefix+'50');
-  charts[idPrefix+'50'] = new Chart(document.getElementById(canvasIdHE5), {
+/* Constrói UM gráfico de barras empilhadas (HE 50% + HE 100%) para
+   dimensões com poucas categorias (Unidade, Turno) — substitui o antigo par
+   de gráficos com eixo secundário. */
+function buildHEStackedVertical(canvasId, labels, stats){
+  destroyChart(canvasId);
+  charts[canvasId] = new Chart(document.getElementById(canvasId), {
     data:{ labels,
       datasets:[
-        {type:'bar', label:'Total HE 50% (h)', data:stats.map(x=>+x.totalH5.toFixed(2)), backgroundColor:C.blue, borderRadius:5, yAxisID:'y', order:1},
-        {type:'line', label:'Média HE 50% por colaborador (h)', data:stats.map(x=>+x.avgH5.toFixed(2)), borderColor:C.green, backgroundColor:'transparent', borderWidth:1.5, pointRadius:3, pointBackgroundColor:C.green, yAxisID:'y1', order:0}
+        {type:'bar', label:'HE 50%', data:stats.map(x=>+x.totalH5.toFixed(2)), avgData:stats.map(x=>x.avgH5), backgroundColor:C.blue, stack:'he', borderRadius:4},
+        {type:'bar', label:'HE 100%', data:stats.map(x=>+x.totalH1.toFixed(2)), avgData:stats.map(x=>x.avgH1), backgroundColor:C.red, stack:'he', borderRadius:4}
       ]},
-    options: optBarsSec('Média HE 50% (h)')
-  });
-  destroyChart(idPrefix+'100');
-  charts[idPrefix+'100'] = new Chart(document.getElementById(canvasIdHE1), {
-    data:{ labels,
-      datasets:[
-        {type:'bar', label:'Total HE 100% (h)', data:stats.map(x=>+x.totalH1.toFixed(2)), backgroundColor:C.red, borderRadius:5, yAxisID:'y', order:1},
-        {type:'line', label:'Média HE 100% por colaborador (h)', data:stats.map(x=>+x.avgH1.toFixed(2)), borderColor:C.green, backgroundColor:'transparent', borderWidth:1.5, pointRadius:3, pointBackgroundColor:C.green, yAxisID:'y1', order:0}
-      ]},
-    options: optBarsSec('Média HE 100% (h)')
+    options: optBarsStacked()
   });
 }
-
-/* Constrói um par de gráficos (HE 50% / HE 100%) HORIZONTAIS com eixo
-   secundário, para dimensões com muitas categorias (Setor, Cargo) — só
-   entram categorias com HE>0 daquele tipo específico (50% ou 100%),
-   ordenadas do maior para o menor total, e a altura do canvas escala com a
-   quantidade de categorias (mesmo padrão de chart-cargo/chart-funcao). */
-function buildHEChartPairHorizontal(idPrefix, canvasIdHE5, canvasIdHE1, wrapIdHE5, wrapIdHE1, subIdHE5, subIdHE1, catField, stats){
+/* Igual, mas HORIZONTAL e ordenado por total — para Setor e Cargo, que têm
+   muitas categorias. Só entram categorias com alguma HE (50% ou 100%). */
+function buildHEStackedHorizontal(canvasId, wrapId, subId, catField, stats){
   // Categoria em branco = ruído de dados (mesmo critério já usado em
   // byCargoClean/byFuncaoClean na seção "Gráficos" — x.cargo &&/x.funcao &&).
-  const rows5 = stats.filter(x=>x[catField] && x.totalH5>0).sort((a,b)=>b.totalH5-a.totalH5);
-  const rows1 = stats.filter(x=>x[catField] && x.totalH1>0).sort((a,b)=>b.totalH1-a.totalH1);
+  const rows = stats.filter(x=>x[catField] && (x.totalH5>0 || x.totalH1>0))
+    .sort((a,b)=> (b.totalH5+b.totalH1) - (a.totalH5+a.totalH1));
   const trunc = s => (s||'').length>28 ? (s||'').slice(0,26)+'…' : (s||'');
 
-  const wrap5 = document.getElementById(wrapIdHE5);
-  if(wrap5) wrap5.style.height = Math.min(420, Math.max(180, rows5.length*26+50))+'px';
-  destroyChart(idPrefix+'50');
-  charts[idPrefix+'50'] = new Chart(document.getElementById(canvasIdHE5), {
-    data:{ labels: rows5.map(x=>trunc(x[catField])),
+  const wrap = document.getElementById(wrapId);
+  if(wrap) wrap.style.height = Math.min(460, Math.max(180, rows.length*26+50))+'px';
+  destroyChart(canvasId);
+  charts[canvasId] = new Chart(document.getElementById(canvasId), {
+    data:{ labels: rows.map(x=>trunc(x[catField])),
       datasets:[
-        {type:'bar', label:'Total HE 50% (h)', data:rows5.map(x=>+x.totalH5.toFixed(2)), backgroundColor:C.blue, borderRadius:4, barPercentage:.72, xAxisID:'x', order:1},
-        {type:'line', label:'Média HE 50% por colaborador (h)', data:rows5.map(x=>+x.avgH5.toFixed(2)), borderColor:C.green, backgroundColor:'transparent', borderWidth:1.5, pointRadius:3, pointBackgroundColor:C.green, xAxisID:'x1', order:0}
+        {type:'bar', label:'HE 50%', data:rows.map(x=>+x.totalH5.toFixed(2)), avgData:rows.map(x=>x.avgH5), backgroundColor:C.blue, stack:'he', borderRadius:4, barPercentage:.72},
+        {type:'bar', label:'HE 100%', data:rows.map(x=>+x.totalH1.toFixed(2)), avgData:rows.map(x=>x.avgH1), backgroundColor:C.red, stack:'he', borderRadius:4, barPercentage:.72}
       ]},
-    options: optBarsHSec('Média HE 50% (h)')
+    options: optBarsHStacked()
   });
-  const subEl5 = document.getElementById(subIdHE5);
-  if(subEl5) subEl5.textContent = rows5.length ? `Total de horas (barras) × média por colaborador (linha, eixo secundário) · ${rows5.length} categoria${rows5.length===1?'':'s'} com HE 50% · ordenado por total` : 'Nenhum registro de HE 50% para os filtros selecionados';
+  const subEl = document.getElementById(subId);
+  if(subEl) subEl.textContent = rows.length ? `${rows.length} categoria${rows.length===1?'':'s'} com hora extra · HE 50% + HE 100% empilhadas · ordenado por total` : 'Nenhum registro de hora extra para os filtros selecionados';
+}
 
-  const wrap1 = document.getElementById(wrapIdHE1);
-  if(wrap1) wrap1.style.height = Math.min(420, Math.max(180, rows1.length*26+50))+'px';
-  destroyChart(idPrefix+'100');
-  charts[idPrefix+'100'] = new Chart(document.getElementById(canvasIdHE1), {
-    data:{ labels: rows1.map(x=>trunc(x[catField])),
-      datasets:[
-        {type:'bar', label:'Total HE 100% (h)', data:rows1.map(x=>+x.totalH1.toFixed(2)), backgroundColor:C.red, borderRadius:4, barPercentage:.72, xAxisID:'x', order:1},
-        {type:'line', label:'Média HE 100% por colaborador (h)', data:rows1.map(x=>+x.avgH1.toFixed(2)), borderColor:C.green, backgroundColor:'transparent', borderWidth:1.5, pointRadius:3, pointBackgroundColor:C.green, xAxisID:'x1', order:0}
-      ]},
-    options: optBarsHSec('Média HE 100% (h)')
+/* Total geral de HE (todas as unidades/turnos/setores/cargos que passam nos
+   filtros ativos) — usado no donut de composição 50%×100%. Único ponto em
+   que TODOS os 4 filtros (Unidade/Turno/Setor/Cargo) se aplicam ao mesmo
+   tempo, porque não há dimensão própria de gráfico para excluir. */
+function heOverallStats(mnum){
+  return heAggregate(mnum, (emp,u)=> (!state.unidade||u===state.unidade)
+    && (!state.turno||emp.turno===state.turno)
+    && (!state.cargo||emp.setor===state.cargo)
+    && (!state.funcao||emp.cargo===state.funcao));
+}
+function renderHEDonut(mnum){
+  destroyChart('heDonut');
+  const agg = heOverallStats(mnum);
+  const total = agg.totalH5 + agg.totalH1;
+  charts.heDonut = new Chart(document.getElementById('chart-he-donut'), {
+    type:'doughnut',
+    data:{ labels:['HE 50%','HE 100%'], datasets:[{ data:[+agg.totalH5.toFixed(2), +agg.totalH1.toFixed(2)], backgroundColor:[C.blue, C.red], borderWidth:2, borderColor:'#fff', hoverOffset:6 }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'68%', plugins:{ legend:{display:false},
+      tooltip:{callbacks:{label:ctx=>{ const pct = total>0 ? pct1(ctx.parsed/total*100) : '0.0'; return `${ctx.label}: ${hoursToHHMM(ctx.parsed)}h (${pct}%)`; }}} } }
   });
-  const subEl1 = document.getElementById(subIdHE1);
-  if(subEl1) subEl1.textContent = rows1.length ? `Total de horas (barras) × média por colaborador (linha, eixo secundário) · ${rows1.length} categoria${rows1.length===1?'':'s'} com HE 100% · ordenado por total` : 'Nenhum registro de HE 100% para os filtros selecionados';
+  document.getElementById('he-donut-lbl').innerHTML = `<span class="v">${hoursToHHMM(total)}h</span><span class="l">HE Total</span>`;
+  const pct5 = total>0 ? pct1(agg.totalH5/total*100) : '0.0';
+  const pct1v = total>0 ? pct1(agg.totalH1/total*100) : '0.0';
+  document.getElementById('he-donut-legend').innerHTML =
+    `<span><span class="sw" style="background:${C.blue}"></span>HE 50%: ${hoursToHHMM(agg.totalH5)}h (${pct5}%)</span>` +
+    `<span><span class="sw" style="background:${C.red}"></span>HE 100%: ${hoursToHHMM(agg.totalH1)}h (${pct1v}%)</span>`;
+}
+/* Evolução mensal (Jan-Jul/2026) — única visão que ignora o filtro de Mês de
+   propósito (é justamente a série completa ao longo do tempo); respeita
+   Unidade/Turno/Setor/Cargo normalmente. */
+function renderHEEvolucao(){
+  destroyChart('heEvo');
+  const rows = MESES.map(mesNome=>({ mes:mesNome, ...heOverallStats(MES_NUM[mesNome]) }));
+  charts.heEvo = new Chart(document.getElementById('chart-he-evolucao'), {
+    data:{ labels: rows.map(r=>r.mes),
+      datasets:[
+        {type:'line', label:'HE Total', data:rows.map(r=>+(r.totalH5+r.totalH1).toFixed(2)), borderColor:C.indigo, backgroundColor:'transparent', borderWidth:2.5, pointRadius:3, pointBackgroundColor:C.indigo, tension:.25, order:0},
+        {type:'line', label:'HE 50%', data:rows.map(r=>+r.totalH5.toFixed(2)), borderColor:C.blue, backgroundColor:'transparent', borderWidth:1.5, pointRadius:2.5, pointBackgroundColor:C.blue, tension:.25, order:1},
+        {type:'line', label:'HE 100%', data:rows.map(r=>+r.totalH1.toFixed(2)), borderColor:C.red, backgroundColor:'transparent', borderWidth:1.5, pointRadius:2.5, pointBackgroundColor:C.red, tension:.25, order:1}
+      ]},
+    options: optLineTrend()
+  });
 }
 
 function renderGraficosHE(){
   const mnum = MES_NUM[state.mes||MESES[MESES.length-1]];
 
+  renderHEDonut(mnum);
+  renderHEEvolucao();
+
   const stU = statsByUnidadeHE(mnum);
-  buildHEChartPairVertical('cHE', 'chart-he50-unidade', 'chart-he100-unidade', stU.map(x=>x.unidade.replace('GPA ','')), stU);
+  buildHEStackedVertical('chart-he-unidade', stU.map(x=>x.unidade.replace('GPA ','')), stU);
 
   const stT = statsByTurnoHE(mnum);
-  buildHEChartPairVertical('cHETurno', 'chart-he50-turno', 'chart-he100-turno', stT.map(x=>x.turno), stT);
+  buildHEStackedVertical('chart-he-turno', stT.map(x=>x.turno), stT);
 
   const stS = statsBySetorHE(mnum);
-  buildHEChartPairHorizontal('cHESetor', 'chart-he50-setor', 'chart-he100-setor', 'ch-he50-setor-wrap', 'ch-he100-setor-wrap', 'he50-setor-sub', 'he100-setor-sub', 'setor', stS);
+  buildHEStackedHorizontal('chart-he-setor', 'ch-he-setor-wrap', 'he-setor-sub', 'setor', stS);
 
   const stF = statsByFuncaoHE(mnum);
-  buildHEChartPairHorizontal('cHECargo', 'chart-he50-cargo', 'chart-he100-cargo', 'ch-he50-cargo-wrap', 'ch-he100-cargo-wrap', 'he50-cargo-sub', 'he100-cargo-sub', 'funcao', stF);
+  buildHEStackedHorizontal('chart-he-cargo', 'ch-he-cargo-wrap', 'he-cargo-sub', 'funcao', stF);
 }
 
 function renderCharts(){
