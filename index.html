@@ -684,6 +684,10 @@ img,svg{max-width:100%}
   .chart-title{font-size:14px}
   .ch{height:300px}
   .ch-lg{height:340px}
+  .ch-donut{height:280px}
+  .ch-hbar{min-height:300px}
+  .donut-center-lbl .v{font-size:26px}
+  .donut-center-lbl .l{font-size:11px}
   .op-hero-val{font-size:40px}
   .op-card-uni{font-size:21px}
   table.tprod{font-size:13px}
@@ -696,6 +700,10 @@ img,svg{max-width:100%}
   .kpi-val{font-size:38px}
   .ch{height:360px}
   .ch-lg{height:400px}
+  .ch-donut{height:320px}
+  .ch-hbar{min-height:340px}
+  .donut-center-lbl .v{font-size:30px}
+  .donut-center-lbl .l{font-size:12px}
   .op-hero-val{font-size:46px}
   .op-card-uni{font-size:23px}
   table.tprod{font-size:14px}
@@ -2215,17 +2223,59 @@ function renderDimensionamento(){
 }
 
 /* ===== Charts ===== */
+/* barValuePlugin: desenha o valor numérico acima/ao lado de cada barra.
+   Em gráficos EMPILHADOS (stacked:true em x ou y), rotular CADA segmento
+   individualmente causa sobreposição de texto quando os segmentos ficam
+   pequenos/próximos (ex.: HE 50% x HE 100%) — então, nesse caso, o plugin
+   desenha apenas UM rótulo por barra, com o TOTAL empilhado, posicionado
+   no topo da pilha inteira (posição do último dataset de barra, que é
+   sempre o segmento mais externo). Gráficos não-empilhados continuam
+   recebendo um rótulo por segmento, como antes. */
 const barValuePlugin = {
   id:'barValuePlugin',
   afterDatasetsDraw(chart){
     const {ctx} = chart;
     const horizontal = chart.options.indexAxis === 'y';
+    const scaleOpts = chart.options.scales || {};
+    const isStacked = !!((scaleOpts.x && scaleOpts.x.stacked) || (scaleOpts.y && scaleOpts.y.stacked));
+    const pluginOpts = (chart.options.plugins && chart.options.plugins.barValuePlugin) || {};
+    const fmt = pluginOpts.formatter;
+    ctx.save();
+    ctx.fillStyle='#0F1B2D';
+    ctx.font='700 10px Inter, sans-serif';
+
+    if(isStacked){
+      const barIdxs = chart.data.datasets.map((d,i)=>i).filter(i=>{
+        const meta = chart.getDatasetMeta(i);
+        return meta.type==='bar' && !meta.hidden;
+      });
+      if(barIdxs.length){
+        const lastMeta = chart.getDatasetMeta(barIdxs[barIdxs.length-1]);
+        const n = (chart.data.labels||[]).length;
+        for(let i=0;i<n;i++){
+          const total = barIdxs.reduce((sum,di)=>{
+            const v = chart.data.datasets[di].data[i];
+            return sum + (typeof v==='number' ? v : 0);
+          },0);
+          const bar = lastMeta.data[i];
+          if(!bar || total<=0) continue;
+          const label = fmt ? fmt(total) : (Number.isInteger(total)? total.toLocaleString('pt-BR') : total.toFixed(1));
+          if(horizontal){
+            ctx.textAlign='left'; ctx.textBaseline='middle';
+            ctx.fillText(label, bar.x+6, bar.y);
+          } else {
+            ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+            ctx.fillText(label, bar.x, bar.y-4);
+          }
+        }
+      }
+      ctx.restore();
+      return;
+    }
+
     chart.data.datasets.forEach((ds,di)=>{
       const meta = chart.getDatasetMeta(di);
       if(meta.type!=='bar' || meta.hidden) return;
-      ctx.save();
-      ctx.fillStyle='#0F1B2D';
-      ctx.font='700 10px Inter, sans-serif';
       meta.data.forEach((bar,i)=>{
         const v = ds.data[i];
         if(v===undefined||v===null) return;
@@ -2238,8 +2288,8 @@ const barValuePlugin = {
           ctx.fillText(label, bar.x, bar.y-4);
         }
       });
-      ctx.restore();
     });
+    ctx.restore();
   }
 };
 Chart.register(barValuePlugin);
@@ -2283,6 +2333,7 @@ function optBarsStacked(){
   return {
     responsive:true, maintainAspectRatio:false,
     plugins:{ legend:{display:true, position:'bottom', labels:{font:{size:11,family:'Inter'}, boxWidth:12, usePointStyle:true, color:'#4B5768'}},
+      barValuePlugin:{formatter:v=>hoursToHHMM(v)+'h'},
       tooltip:{bodyFont:{family:'Inter'}, callbacks:{
         label:ctx=>{
           const avg = ctx.dataset.avgData ? ctx.dataset.avgData[ctx.dataIndex] : null;
@@ -2304,6 +2355,7 @@ function optBarsHStacked(){
   return {
     indexAxis:'y', responsive:true, maintainAspectRatio:false,
     plugins:{ legend:{display:true, position:'bottom', labels:{font:{size:11,family:'Inter'}, boxWidth:12, usePointStyle:true, color:'#4B5768'}},
+      barValuePlugin:{formatter:v=>hoursToHHMM(v)+'h'},
       tooltip:{bodyFont:{family:'Inter'}, callbacks:{
         label:ctx=>{
           const avg = ctx.dataset.avgData ? ctx.dataset.avgData[ctx.dataIndex] : null;
