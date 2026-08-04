@@ -492,13 +492,6 @@ table.tind td.pi-dia-vazio{color:var(--tx-muted);font-weight:400}
 /* ── TABELA RESUMO ── */
 table.tdet{width:100%;border-collapse:collapse}
 table.tdet thead tr{background:var(--indigo);color:#fff;position:sticky;top:0;z-index:1}
-/* Cabeçalhos clicáveis de ordenação (ex.: Hora Extra 50%/100%/Total) —
-   alterna maior→menor / menor→maior a cada clique, com uma setinha
-   indicando a coluna e o sentido ativos. */
-th.th-sort{cursor:pointer;user-select:none;transition:background .15s}
-th.th-sort:hover{background:#1E3A6E}
-th.th-sort.active{background:#0F1B2D}
-.th-sort-arrow{display:inline-block;margin-left:4px;font-size:9px;opacity:.85}
 table.tdet thead th{padding:10px 13px;text-align:center;font-weight:700;font-size:10px;
   text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
 table.tdet thead th.tal{text-align:left}
@@ -1168,6 +1161,17 @@ img,svg{max-width:100%}
         </div>
         <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
           <div class="fg"><label>Buscar Colaborador</label><input type="text" id="he-busca" placeholder="Nome..."></div>
+          <div class="fg"><label>Classificar por</label>
+            <select id="he-sort-select">
+              <option value="">Nenhuma (mais recente primeiro)</option>
+              <option value="total_desc">Total: Maior → Menor</option>
+              <option value="total_asc">Total: Menor → Maior</option>
+              <option value="h5_desc">HE 50%: Maior → Menor</option>
+              <option value="h5_asc">HE 50%: Menor → Maior</option>
+              <option value="h1_desc">HE 100%: Maior → Menor</option>
+              <option value="h1_asc">HE 100%: Menor → Maior</option>
+            </select>
+          </div>
           <span style="font-size:11px;color:var(--tx-secondary);padding-bottom:7px">Unidade, Mês, Turno, Setor e Cargo: barra superior</span>
           <div style="margin-left:auto;font-size:11px;color:var(--tx-secondary);font-weight:600;padding-bottom:7px" id="he-det-count"></div>
         </div>
@@ -1180,9 +1184,9 @@ img,svg{max-width:100%}
               <th class="tal">Setor</th>
               <th class="tal">Cargo</th>
               <th>Turno</th>
-              <th class="th-sort" id="he-sort-h5" data-field="h5">HE 50% (h)<span class="th-sort-arrow"></span></th>
-              <th class="th-sort" id="he-sort-h1" data-field="h1">HE 100% (h)<span class="th-sort-arrow"></span></th>
-              <th class="th-sort" id="he-sort-total" data-field="total">Total (h)<span class="th-sort-arrow"></span></th>
+              <th>HE 50% (h)</th>
+              <th>HE 100% (h)</th>
+              <th>Total (h)</th>
             </tr></thead>
             <tbody id="he-det-body"></tbody>
           </table>
@@ -2416,29 +2420,17 @@ function renderHoraExtra(){
    trabalhado) — classificação feita a partir da anotação de cada dia no
    espelho ("DSR 100%", "Feriado...", "Folga..."). Totalmente integrado aos
    filtros globais: Unidade, Mês, Turno, Setor e Cargo — sem controles
-   próprios além da busca por nome, que não tem equivalente global.
-   Colunas HE 50%/HE 100%/Total são clicáveis para ordenar do maior para o
-   menor (e vice-versa) — facilita achar quem mais/menos fez hora extra. */
+   próprios além da busca por nome e do seletor de classificação, que não
+   têm equivalente global.
+   Classificação por um select próprio ("Nenhuma", "Total: Maior → Menor"
+   etc.), ao lado da busca por nome — facilita achar quem mais/menos fez
+   hora extra sem depender de cliques no cabeçalho da tabela. */
 function hoursToHHMM(h){
   const totalMin = Math.round((h||0)*60);
   const hh = Math.floor(totalMin/60), mm = totalMin%60;
   return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
 }
-const heSort = { field:null, dir:'desc' };
-function initHeSortHeaders(){
-  [['he-sort-h5','h5'],['he-sort-h1','h1'],['he-sort-total','total']].forEach(([id,field])=>{
-    const th = document.getElementById(id);
-    if(th.dataset.init) return;
-    th.dataset.init='1';
-    th.addEventListener('click', ()=>{
-      heSort.dir = (heSort.field===field && heSort.dir==='desc') ? 'asc' : 'desc';
-      heSort.field = field;
-      renderHoraExtraDetalhe(MES_NUM[state.mes||MESES[MESES.length-1]]);
-    });
-  });
-}
 function renderHoraExtraDetalhe(mnum){
-  initHeSortHeaders();
   const buscaEl = document.getElementById('he-busca');
   if(!buscaEl.dataset.init){
     buscaEl.dataset.init='1';
@@ -2447,7 +2439,13 @@ function renderHoraExtraDetalhe(mnum){
       window.__heBuscaTimer = setTimeout(()=>renderHoraExtraDetalhe(MES_NUM[state.mes||MESES[MESES.length-1]]), 180);
     });
   }
+  const sortEl = document.getElementById('he-sort-select');
+  if(!sortEl.dataset.init){
+    sortEl.dataset.init='1';
+    sortEl.addEventListener('change', ()=>renderHoraExtraDetalhe(MES_NUM[state.mes||MESES[MESES.length-1]]));
+  }
   const busca = (buscaEl.value||'').trim().toUpperCase();
+  const sortVal = sortEl.value; // '', 'total_desc', 'total_asc', 'h5_desc', 'h5_asc', 'h1_desc', 'h1_asc'
   const unidsList = state.unidade ? [state.unidade] : UNIDS;
   // emp.turno já vem no mesmo formato do filtro global ("1º Turno" etc.),
   // diferente da Produtividade Individual (que usa dígito solto) — aqui a
@@ -2470,21 +2468,13 @@ function renderHoraExtraDetalhe(mnum){
     });
   });
 
-  if(heSort.field){
-    const f = heSort.field, dir = heSort.dir==='desc' ? -1 : 1;
-    rows.sort((a,b)=> (a[f]-b[f])*dir || (a.data<b.data?1:-1));
+  if(sortVal){
+    const [field, dirTxt] = sortVal.split('_');
+    const dir = dirTxt==='desc' ? -1 : 1;
+    rows.sort((a,b)=> (a[field]-b[field])*dir || (a.data<b.data?1:-1));
   } else {
     rows.sort((a,b)=> a.data!==b.data ? (a.data<b.data?1:-1) : (a.nome<b.nome?-1:1));
   }
-
-  // Destaca no cabeçalho qual coluna está ordenando e em que sentido.
-  [['he-sort-h5','h5'],['he-sort-h1','h1'],['he-sort-total','total']].forEach(([id,field])=>{
-    const th = document.getElementById(id);
-    const arrow = th.querySelector('.th-sort-arrow');
-    const isActive = heSort.field===field;
-    th.classList.toggle('active', isActive);
-    if(arrow) arrow.textContent = isActive ? (heSort.dir==='desc' ? '▼' : '▲') : '';
-  });
 
   document.getElementById('he-det-count').textContent = rows.length+' registro'+(rows.length===1?'':'s');
 
