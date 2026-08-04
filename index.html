@@ -79,7 +79,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx-primary);font-s
   padding:10px 24px;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;
   box-shadow:0 1px 4px rgba(15,27,45,.04);flex-shrink:0}
 .fg{display:flex;flex-direction:column;gap:3px}
-.fg label{font-size:10px;font-weight:700;color:var(--tx-muted);text-transform:uppercase;letter-spacing:.5px}
+.fg label{font-size:10px;font-weight:700;color:var(--tx-secondary);text-transform:uppercase;letter-spacing:.5px}
 .fg select{border:1.5px solid var(--border);border-radius:6px;padding:7px 30px 7px 11px;
   font-size:13px;font-weight:500;color:var(--tx-primary);background:var(--bg);cursor:pointer;
   font-family:var(--font);min-width:140px;appearance:none;
@@ -94,7 +94,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx-primary);font-s
   font-size:13px;font-weight:600;cursor:pointer;color:var(--tx-secondary);background:#fff;
   font-family:var(--font);align-self:flex-end;transition:all .15s;white-space:nowrap}
 .btn-clear:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-light)}
-.fcount{margin-left:auto;align-self:flex-end;font-size:12px;color:var(--tx-muted);font-style:italic;white-space:nowrap}
+.fcount{margin-left:auto;align-self:flex-end;font-size:12px;color:var(--tx-secondary);font-style:italic;white-space:nowrap}
 
 /* ── CONTEÚDO ── */
 .content{padding:20px 24px;flex:1}
@@ -492,6 +492,13 @@ table.tind td.pi-dia-vazio{color:var(--tx-muted);font-weight:400}
 /* ── TABELA RESUMO ── */
 table.tdet{width:100%;border-collapse:collapse}
 table.tdet thead tr{background:var(--indigo);color:#fff;position:sticky;top:0;z-index:1}
+/* Cabeçalhos clicáveis de ordenação (ex.: Hora Extra 50%/100%/Total) —
+   alterna maior→menor / menor→maior a cada clique, com uma setinha
+   indicando a coluna e o sentido ativos. */
+th.th-sort{cursor:pointer;user-select:none;transition:background .15s}
+th.th-sort:hover{background:#1E3A6E}
+th.th-sort.active{background:#0F1B2D}
+.th-sort-arrow{display:inline-block;margin-left:4px;font-size:9px;opacity:.85}
 table.tdet thead th{padding:10px 13px;text-align:center;font-weight:700;font-size:10px;
   text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
 table.tdet thead th.tal{text-align:left}
@@ -827,8 +834,8 @@ img,svg{max-width:100%}
         </div>
         <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
           <div class="fg"><label>Buscar Colaborador</label><input type="text" id="pi-busca" placeholder="Nome..."></div>
-          <span style="font-size:11px;color:var(--tx-muted);padding-bottom:7px">Unidade e Turno: barra superior</span>
-          <div style="margin-left:auto;font-size:11px;color:var(--tx-muted);font-weight:600;padding-bottom:7px" id="pi-det-count"></div>
+          <span style="font-size:11px;color:var(--tx-secondary);padding-bottom:7px">Unidade e Turno: barra superior</span>
+          <div style="margin-left:auto;font-size:11px;color:var(--tx-secondary);font-weight:600;padding-bottom:7px" id="pi-det-count"></div>
         </div>
         <div class="tbl-scroll" style="max-height:560px">
           <table class="tdet tprod tind" id="pi-det-table">
@@ -854,7 +861,7 @@ img,svg{max-width:100%}
 
       <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:4px">
         <div class="fg"><label>Setor</label><select id="dim-cargo"></select></div>
-        <div style="font-size:11px;color:var(--tx-muted);padding-bottom:7px">Unidade e demais filtros: barra superior</div>
+        <div style="font-size:11px;color:var(--tx-secondary);padding-bottom:7px">Unidade e demais filtros: barra superior</div>
       </div>
 
       <div class="dim-cards-grid op-cards-grid" id="dim-cards"></div>
@@ -1056,7 +1063,7 @@ img,svg{max-width:100%}
       </div>
 
       <div class="pres-filtros">
-        <span style="font-size:11px;color:var(--tx-muted)">Filtrado por Unidade e Mês da barra superior</span>
+        <span style="font-size:11px;color:var(--tx-secondary)">Filtrado por Unidade e Mês da barra superior</span>
       </div>
 
       <div class="pres-sec-lbl">Movimentações · Admissões e Desligamentos <span id="mov-count"></span></div>
@@ -1102,7 +1109,7 @@ img,svg{max-width:100%}
 
       <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:4px">
         <div class="fg"><label>Situação</label><select id="ctr-status"></select></div>
-        <div style="font-size:11px;color:var(--tx-muted);padding-bottom:7px">Unidade: barra superior</div>
+        <div style="font-size:11px;color:var(--tx-secondary);padding-bottom:7px">Unidade: barra superior</div>
       </div>
 
       <div class="tbl-card">
@@ -1131,7 +1138,7 @@ img,svg{max-width:100%}
       <div class="dim-kpi-row" id="he-kpi-row"></div>
 
       <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:4px">
-        <span style="font-size:11px;color:var(--tx-muted)">Filtrado por Unidade e Mês da barra superior</span>
+        <span style="font-size:11px;color:var(--tx-secondary)">Filtrado por Unidade e Mês da barra superior</span>
       </div>
 
       <div class="tbl-card">
@@ -1161,8 +1168,8 @@ img,svg{max-width:100%}
         </div>
         <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
           <div class="fg"><label>Buscar Colaborador</label><input type="text" id="he-busca" placeholder="Nome..."></div>
-          <span style="font-size:11px;color:var(--tx-muted);padding-bottom:7px">Unidade, Mês, Turno, Setor e Cargo: barra superior</span>
-          <div style="margin-left:auto;font-size:11px;color:var(--tx-muted);font-weight:600;padding-bottom:7px" id="he-det-count"></div>
+          <span style="font-size:11px;color:var(--tx-secondary);padding-bottom:7px">Unidade, Mês, Turno, Setor e Cargo: barra superior</span>
+          <div style="margin-left:auto;font-size:11px;color:var(--tx-secondary);font-weight:600;padding-bottom:7px" id="he-det-count"></div>
         </div>
         <div class="tbl-scroll" style="max-height:560px">
           <table class="tdet" id="he-det-table">
@@ -1173,9 +1180,9 @@ img,svg{max-width:100%}
               <th class="tal">Setor</th>
               <th class="tal">Cargo</th>
               <th>Turno</th>
-              <th>HE 50% (h)</th>
-              <th>HE 100% (h)</th>
-              <th>Total (h)</th>
+              <th class="th-sort" id="he-sort-h5" data-field="h5">HE 50% (h)<span class="th-sort-arrow"></span></th>
+              <th class="th-sort" id="he-sort-h1" data-field="h1">HE 100% (h)<span class="th-sort-arrow"></span></th>
+              <th class="th-sort" id="he-sort-total" data-field="total">Total (h)<span class="th-sort-arrow"></span></th>
             </tr></thead>
             <tbody id="he-det-body"></tbody>
           </table>
@@ -2409,8 +2416,29 @@ function renderHoraExtra(){
    trabalhado) — classificação feita a partir da anotação de cada dia no
    espelho ("DSR 100%", "Feriado...", "Folga..."). Totalmente integrado aos
    filtros globais: Unidade, Mês, Turno, Setor e Cargo — sem controles
-   próprios além da busca por nome, que não tem equivalente global. ---- */
+   próprios além da busca por nome, que não tem equivalente global.
+   Colunas HE 50%/HE 100%/Total são clicáveis para ordenar do maior para o
+   menor (e vice-versa) — facilita achar quem mais/menos fez hora extra. */
+function hoursToHHMM(h){
+  const totalMin = Math.round((h||0)*60);
+  const hh = Math.floor(totalMin/60), mm = totalMin%60;
+  return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
+}
+const heSort = { field:null, dir:'desc' };
+function initHeSortHeaders(){
+  [['he-sort-h5','h5'],['he-sort-h1','h1'],['he-sort-total','total']].forEach(([id,field])=>{
+    const th = document.getElementById(id);
+    if(th.dataset.init) return;
+    th.dataset.init='1';
+    th.addEventListener('click', ()=>{
+      heSort.dir = (heSort.field===field && heSort.dir==='desc') ? 'asc' : 'desc';
+      heSort.field = field;
+      renderHoraExtraDetalhe(MES_NUM[state.mes||MESES[MESES.length-1]]);
+    });
+  });
+}
 function renderHoraExtraDetalhe(mnum){
+  initHeSortHeaders();
   const buscaEl = document.getElementById('he-busca');
   if(!buscaEl.dataset.init){
     buscaEl.dataset.init='1';
@@ -2437,11 +2465,26 @@ function renderHoraExtraDetalhe(mnum){
         if(mm !== mnum) return;
         const d = emp.dias[iso];
         const h5 = d.h5||0, h1 = d.h1||0;
-        rows.push({data:iso, unidade:u, nome:emp.nome, setor:emp.setor, cargo:emp.cargo, turno:emp.turno, h5, h1});
+        rows.push({data:iso, unidade:u, nome:emp.nome, setor:emp.setor, cargo:emp.cargo, turno:emp.turno, h5, h1, total:h5+h1});
       });
     });
   });
-  rows.sort((a,b)=> a.data!==b.data ? (a.data<b.data?1:-1) : (a.nome<b.nome?-1:1));
+
+  if(heSort.field){
+    const f = heSort.field, dir = heSort.dir==='desc' ? -1 : 1;
+    rows.sort((a,b)=> (a[f]-b[f])*dir || (a.data<b.data?1:-1));
+  } else {
+    rows.sort((a,b)=> a.data!==b.data ? (a.data<b.data?1:-1) : (a.nome<b.nome?-1:1));
+  }
+
+  // Destaca no cabeçalho qual coluna está ordenando e em que sentido.
+  [['he-sort-h5','h5'],['he-sort-h1','h1'],['he-sort-total','total']].forEach(([id,field])=>{
+    const th = document.getElementById(id);
+    const arrow = th.querySelector('.th-sort-arrow');
+    const isActive = heSort.field===field;
+    th.classList.toggle('active', isActive);
+    if(arrow) arrow.textContent = isActive ? (heSort.dir==='desc' ? '▼' : '▲') : '';
+  });
 
   document.getElementById('he-det-count').textContent = rows.length+' registro'+(rows.length===1?'':'s');
 
@@ -2454,9 +2497,9 @@ function renderHoraExtraDetalhe(mnum){
       <td class="tal">${r.setor || naTxt}</td>
       <td class="tal">${r.cargo || naTxt}</td>
       <td>${r.turno || naTxt}</td>
-      <td>${r.h5>0 ? r.h5.toFixed(1) : naTxt}</td>
-      <td>${r.h1>0 ? `<span style="font-weight:800;color:var(--red)">${r.h1.toFixed(1)}</span>` : naTxt}</td>
-      <td style="font-weight:800;color:var(--indigo)">${(r.h5+r.h1).toFixed(1)}</td>
+      <td>${hoursToHHMM(r.h5)}</td>
+      <td>${r.h1>0 ? `<span style="font-weight:800;color:var(--red)">${hoursToHHMM(r.h1)}</span>` : hoursToHHMM(0)}</td>
+      <td style="font-weight:800;color:var(--indigo)">${hoursToHHMM(r.total)}</td>
     </tr>`).join('') ||
     `<tr><td colspan="9" style="padding:20px;text-align:center;color:var(--tx-muted)">Nenhum registro de hora extra para os filtros selecionados</td></tr>`;
 }
