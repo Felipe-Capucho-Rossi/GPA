@@ -832,7 +832,10 @@ img,svg{max-width:100%}
     <!-- RESULTADO OPERACIONAL -->
     <div id="sec-operacional" style="scroll-margin-top:130px">
       <div class="sec-head"><span class="sec-title">Resultado Operacional · Produção</span><div class="sec-line"></div>
-        <span style="font-size:11px;color:var(--tx-muted);white-space:nowrap">Fonte: aba DASH · Planilha CONTROLE GERAL de cada unidade · Mês corrente</span>
+        <span style="font-size:11px;color:var(--tx-muted);white-space:nowrap">Fonte: aba DASH · Planilha CONTROLE GERAL de cada unidade</span>
+      </div>
+      <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);margin-bottom:16px">
+        <span style="font-size:11px;color:var(--tx-secondary)">Unidade e Turno: barra superior · dados disponíveis apenas para Julho/2026 · Setor e Cargo não se aplicam (Resultado Operacional é agregado por Unidade/Turno, sem essa quebra)</span>
       </div>
       <div class="op-kpi-grid" id="op-kpi-row"></div>
       <div class="dim-cards-grid op-cards-grid" id="op-cards"></div>
@@ -841,7 +844,10 @@ img,svg{max-width:100%}
     <!-- CONTROLE DE PRODUTIVIDADE -->
     <div id="sec-produtividade" style="scroll-margin-top:130px">
       <div class="sec-head"><span class="sec-title">Controle de Produtividade · Relatório Diário</span><div class="sec-line"></div>
-        <span style="font-size:11px;color:var(--tx-muted);white-space:nowrap">Fonte: aba Relatório Diário · Planilha CONTROLE GERAL de cada unidade · Julho/2026</span>
+        <span style="font-size:11px;color:var(--tx-muted);white-space:nowrap">Fonte: aba Relatório Diário · Planilha CONTROLE GERAL de cada unidade</span>
+      </div>
+      <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);margin-bottom:16px">
+        <span style="font-size:11px;color:var(--tx-secondary)">Unidade: barra superior · dados disponíveis apenas para Julho/2026 · Turno, Setor e Cargo não se aplicam (relatório diário já mostra os 3 turnos lado a lado, por unidade, sem quebra de setor/cargo)</span>
       </div>
       <div class="prod-kpi-grid" id="prod-kpi-row"></div>
       <div id="prod-tables"></div>
@@ -1877,39 +1883,92 @@ function dimRowColor(pct){
 }
 
 function pct1safe(n){ return isFinite(n) ? pct1(n) : '0,0'; }
+/* Resultado Operacional: PRODUCAO_DADOS/OPERACIONAL_DADOS vêm da aba DASH de
+   cada planilha e só existem para o mês corrente (Julho/2026) — não há uma
+   linha por mês, é um retrato fixo. Por isso, se o usuário filtrar por outro
+   Mês, a seção inteira mostra um estado "sem dados" em vez de reexibir os
+   mesmos números de Julho sob um rótulo de mês diferente (o que seria dado
+   incorreto, não apenas um filtro "não aplicado"). Turno, por outro lado,
+   TEM granularidade própria (op.turnos), então É filtrado de verdade: os
+   KPIs do topo e o hero de cada card são recalculados a partir de apenas o
+   turno selecionado, e os turnos não selecionados somem das linhas do card
+   — nada de exibir os 3 turnos com um filtro de Turno ativo. Setor e Cargo
+   não têm equivalente nesta fonte (aba DASH é por Unidade/Turno, sem
+   quebra de setor/cargo), então não filtram aqui — ver aviso no cabeçalho
+   da seção. */
+const OPERACIONAL_MES_DISPONIVEL = 'Julho';
 function renderOperacional(){
+  const mesOk = !state.mes || state.mes===OPERACIONAL_MES_DISPONIVEL;
+  if(!mesOk){
+    document.getElementById('op-kpi-row').innerHTML =
+      `<div style="grid-column:1/-1;padding:28px 16px;text-align:center;color:var(--tx-muted);font-size:13px;background:var(--card);border:1px solid var(--border-light);border-radius:8px">
+        Resultado Operacional não tem dados para <strong>${state.mes}</strong> — esta seção só tem dados de <strong>${OPERACIONAL_MES_DISPONIVEL}/2026</strong>.
+      </div>`;
+    document.getElementById('op-cards').innerHTML = '';
+    return;
+  }
+
   // Integrado ao filtro global de Unidade (topbar): quando uma unidade está
   // selecionada, tanto os KPIs agregados quanto os cards abaixo mostram
   // apenas essa unidade — nada da(s) outra(s) fica visível.
   const producaoScope = PRODUCAO_DADOS.filter(p=> !state.unidade || p.unidade===state.unidade);
   const unidades = producaoScope.map(p=>p.unidade);
-  const totReal = producaoScope.reduce((a,p)=>a+p.real,0);
-  const totMeta = producaoScope.reduce((a,p)=>a+p.meta,0);
+
+  // Turno filtrado de verdade: soma só o(s) turno(s) que passam no filtro
+  // (todos, se nenhum turno selecionado) — usado tanto nos KPIs do topo
+  // quanto no hero/linhas de cada card abaixo.
+  function turnosDaUnidade(u){
+    const op = OPERACIONAL_DADOS[u] || {turnos:[]};
+    return state.turno ? op.turnos.filter(t=>t.turno===state.turno) : op.turnos;
+  }
+  const realMetaPorUnidade = {};
+  unidades.forEach(u=>{
+    const ts = turnosDaUnidade(u);
+    realMetaPorUnidade[u] = { real: ts.reduce((a,t)=>a+t.realizado,0), meta: ts.reduce((a,t)=>a+t.meta,0) };
+  });
+
+  const totReal = unidades.reduce((a,u)=>a+realMetaPorUnidade[u].real,0);
+  const totMeta = unidades.reduce((a,u)=>a+realMetaPorUnidade[u].meta,0);
   const totPct = totMeta>0 ? totReal/totMeta*100 : 0;
   const totAtestado = unidades.reduce((a,u)=>a+OPERACIONAL_DADOS[u].absenteismo.atestado,0);
   const totFalta = unidades.reduce((a,u)=>a+OPERACIONAL_DADOS[u].absenteismo.falta,0);
   const totPresenca = unidades.reduce((a,u)=>a+OPERACIONAL_DADOS[u].absenteismo.presenca,0);
   const absDenom = totPresenca+totFalta+totAtestado;
   const absPctGeral = absDenom>0 ? (totFalta+totAtestado)/absDenom*100 : 0;
-  const mediaGlobalPonderada = unidades.length ? Math.round(unidades.reduce((a,u)=>a+MEDIA_CAIXA_HD[u],0)/unidades.length) : 0;
+  // Média Caixa H/D ponderada: usa a média do TURNO selecionado (já que
+  // op.turnos[i].mediaCaixaHD é por turno) quando há filtro de Turno; senão
+  // usa a média por unidade (MEDIA_CAIXA_HD), como antes.
+  const mediaGlobalPonderada = (()=>{
+    if(state.turno){
+      const vals = unidades.map(u=>{
+        const t = (OPERACIONAL_DADOS[u]?.turnos||[]).find(tt=>tt.turno===state.turno);
+        return t ? t.mediaCaixaHD : null;
+      }).filter(v=>v!=null);
+      return vals.length ? Math.round(vals.reduce((a,v)=>a+v,0)/vals.length) : 0;
+    }
+    return unidades.length ? Math.round(unidades.reduce((a,u)=>a+MEDIA_CAIXA_HD[u],0)/unidades.length) : 0;
+  })();
   const escopoTxt = state.unidade ? state.unidade.replace('GPA ','') : '3 unidades';
+  const turnoTxt = state.turno ? ' · '+state.turno : '';
 
   document.getElementById('op-kpi-row').innerHTML = [
-    {lbl:'Produção Real (caixas)', val:fmt(totReal), sub:'Acumulado no mês · '+escopoTxt, cls:'k-indigo'},
-    {lbl:'Meta de Produção', val:fmt(totMeta), sub:'Caixas planejadas no mês', cls:''},
+    {lbl:'Produção Real (caixas)', val:fmt(totReal), sub:'Acumulado no mês · '+escopoTxt+turnoTxt, cls:'k-indigo'},
+    {lbl:'Meta de Produção', val:fmt(totMeta), sub:'Caixas planejadas no mês'+turnoTxt, cls:''},
     {lbl:'% Meta Atingida', val:pct1safe(totPct)+'%', sub: totPct>=100?'Meta batida':'Abaixo da meta', cls: totPct>=100?'k-green':totPct>=70?'k-amber':'k-red'},
-    {lbl:'Média Caixa H/D', val:fmt(mediaGlobalPonderada), sub: state.unidade?'Unidade selecionada':'Média simples entre unidades', cls:'k-blue'},
-    {lbl:'Absenteísmo Geral', val:pct1safe(absPctGeral)+'%', sub:`${fmt(totFalta)} faltas · ${fmt(totAtestado)} atestados`, cls: absPctGeral<=15?'k-green':absPctGeral<=25?'k-amber':'k-red'},
+    {lbl:'Média Caixa H/D', val:fmt(mediaGlobalPonderada), sub: state.turno?state.turno:(state.unidade?'Unidade selecionada':'Média simples entre unidades'), cls:'k-blue'},
+    {lbl:'Absenteísmo Geral', val:pct1safe(absPctGeral)+'%', sub:`${fmt(totFalta)} faltas · ${fmt(totAtestado)} atestados${state.turno?' (todos os turnos)':''}`, cls: absPctGeral<=15?'k-green':absPctGeral<=25?'k-amber':'k-red'},
   ].map(k=>`<div class="kpi ${k.cls}"><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
 
   const cardsHtml = producaoScope.map(p=>{
     const und = p.unidade;
     const op = OPERACIONAL_DADOS[und] || {turnos:[], absenteismo:{atestado:0,falta:0,presenca:0,pct:0}};
-    const pctReal = p.meta>0 ? p.real/p.meta*100 : 0;
+    const turnosFiltrados = turnosDaUnidade(und);
+    const real = realMetaPorUnidade[und].real, meta = realMetaPorUnidade[und].meta;
+    const pctReal = meta>0 ? real/meta*100 : 0;
     const badgeCls = pctReal>=100?'dim-gap-ok':pctReal>=70?'dim-gap-warn':'dim-gap-crit';
     const badgeTxt = pctReal>=100?'Meta batida':pctReal>=70?'Abaixo da meta':'Crítico';
-    const maxVal = Math.max(...op.turnos.map(t=>Math.max(t.meta,t.realizado)), 1);
-    const turnosHtml = op.turnos.map(t=>{
+    const maxVal = Math.max(...turnosFiltrados.map(t=>Math.max(t.meta,t.realizado)), 1);
+    const turnosHtml = turnosFiltrados.length ? turnosFiltrados.map(t=>{
       const tp = t.meta>0 ? Math.round(t.realizado/t.meta*1000)/10 : 0;
       const wM = Math.round(t.meta/maxVal*100), wR = Math.round(t.realizado/maxVal*100);
       const corR = tp>=100?'var(--green)':tp>=70?'var(--amber)':'var(--red)';
@@ -1932,34 +1991,35 @@ function renderOperacional(){
             </div>
           </div>
         </div>`;
-    }).join('');
+    }).join('') : '<div class="dim-row" style="color:var(--tx-muted);font-size:11.5px;text-align:center;padding:8px 0">Sem dados de turno para o filtro selecionado</div>';
     const metaCor = pctReal>=100?'var(--green)':pctReal>=70?'var(--amber)':'var(--red)';
+    const mediaCaixaCard = state.turno ? (turnosFiltrados[0]?.mediaCaixaHD ?? null) : MEDIA_CAIXA_HD[und];
     return `
       <div class="dim-card op-card">
         <div class="dim-card-head">
           <div>
             <div class="dim-card-uni op-card-uni">${und}</div>
-            <div class="op-card-sub">${fmt(p.real)} de ${fmt(p.meta)} caixas produzidas no mês</div>
+            <div class="op-card-sub">${fmt(real)} de ${fmt(meta)} caixas produzidas no mês${turnoTxt}</div>
           </div>
           <span class="dim-card-gap-badge ${badgeCls}" style="font-size:12.5px;padding:5px 13px">${badgeTxt}</span>
         </div>
         <div class="op-hero-row">
           <div class="op-hero">
             <div class="op-hero-lbl">Média Caixa H/D</div>
-            <div class="op-hero-val" style="color:var(--blue)">${MEDIA_CAIXA_HD[und]!=null?fmt(MEDIA_CAIXA_HD[und]):'—'}</div>
+            <div class="op-hero-val" style="color:var(--blue)">${mediaCaixaCard!=null?fmt(mediaCaixaCard):'—'}</div>
             <div class="op-hero-sub">caixas / hora × dia</div>
           </div>
           <div class="op-hero-div"></div>
           <div class="op-hero">
             <div class="op-hero-lbl">Meta Atingida</div>
             <div class="op-hero-val" style="color:${metaCor}">${pct1safe(pctReal)}%</div>
-            <div class="op-hero-sub">${fmt(p.real)} / ${fmt(p.meta)} caixas</div>
+            <div class="op-hero-sub">${fmt(real)} / ${fmt(meta)} caixas</div>
           </div>
         </div>
         <div class="dim-rows op-rows">${turnosHtml}
           <div class="dim-row" style="margin-top:2px;padding-top:10px;border-top:1px dashed var(--border-light)">
             <div style="display:flex;justify-content:space-between;align-items:center">
-              <div class="dim-row-label">Absenteísmo do mês</div>
+              <div class="dim-row-label">Absenteísmo do mês${state.turno?' (todos os turnos)':''}</div>
               <span style="font-size:11px;font-weight:800;color:${op.absenteismo.pct<=15?'var(--green)':op.absenteismo.pct<=25?'var(--amber)':'var(--red)'}">${op.absenteismo.pct.toFixed(2).replace('.',',')}%</span>
             </div>
             <div style="font-size:11px;color:var(--tx-muted);margin-top:2px">${fmt(op.absenteismo.presenca)} presenças · ${fmt(op.absenteismo.falta)} faltas · ${fmt(op.absenteismo.atestado)} atestados</div>
@@ -1984,6 +2044,19 @@ function prodAvgTotalHC(unit){
   return vals.length ? Math.round(vals.reduce((a,v)=>a+v,0)/vals.length) : 0;
 }
 function renderProdutividade(){
+  // Mesmo caso do Resultado Operacional: PRODUTIVIDADE_DADOS só tem dias de
+  // Julho/2026 (chaves ISO 2026-07-XX) — não existe outro mês nesta fonte.
+  // Selecionar outro Mês mostra um estado "sem dados" em vez de reexibir
+  // Julho sob um rótulo diferente.
+  if(state.mes && state.mes!==OPERACIONAL_MES_DISPONIVEL){
+    document.getElementById('prod-kpi-row').innerHTML =
+      `<div style="grid-column:1/-1;padding:28px 16px;text-align:center;color:var(--tx-muted);font-size:13px;background:var(--card);border:1px solid var(--border-light);border-radius:8px">
+        Controle de Produtividade não tem dados para <strong>${state.mes}</strong> — esta seção só tem dados de <strong>${OPERACIONAL_MES_DISPONIVEL}/2026</strong>.
+      </div>`;
+    document.getElementById('prod-tables').innerHTML = '';
+    return;
+  }
+
   const units = prodUnitsInScope();
 
   const totFastlog = units.reduce((a,u)=>a+prodSum(u,'total_separado_fastlog'),0);
