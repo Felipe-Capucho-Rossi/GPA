@@ -1538,8 +1538,8 @@ function initFilters(){
 
   document.querySelectorAll('.btn-clear').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      state.unidade=''; state.turno=''; state.cargo=''; state.funcao='';
-      document.querySelectorAll('.f-unidade,.f-turno,.f-cargo,.f-funcao').forEach(s=>s.value='');
+      state.unidade=''; state.mes=''; state.turno=''; state.cargo=''; state.funcao='';
+      document.querySelectorAll('.f-unidade,.f-mes,.f-turno,.f-cargo,.f-funcao').forEach(s=>s.value='');
       renderAll();
     });
   });
