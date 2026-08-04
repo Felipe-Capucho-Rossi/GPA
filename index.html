@@ -413,8 +413,8 @@ table.tind td.pi-dia-vazio{color:var(--tx-muted);font-weight:400}
    altura de cabeçalho não importa se o texto quebra ou não. */
 .tgrade th{background:var(--indigo);color:#fff;text-align:center;font-weight:700;
   font-size:10px;text-transform:uppercase;letter-spacing:.5px;vertical-align:middle;
-  position:sticky;top:0;z-index:3;height:44px;box-sizing:border-box;overflow:hidden;padding:0}
-.tgrade th .th-wrap{display:flex;align-items:center;justify-content:center;width:100%;height:44px;
+  position:sticky;top:0;z-index:3;height:40px;box-sizing:border-box;overflow:hidden;padding:0}
+.tgrade th .th-wrap{display:flex;align-items:center;justify-content:center;width:100%;height:40px;
   box-sizing:border-box;overflow:hidden;padding:7px 8px;line-height:14px;white-space:nowrap;text-align:center}
 .tgrade-frozen th:nth-child(1) .th-wrap{justify-content:flex-start;text-align:left}
 .tgrade td{padding:5px 7px;text-align:center;vertical-align:middle;border-bottom:1px solid var(--border-light);
@@ -465,16 +465,24 @@ table.tind td.pi-dia-vazio{color:var(--tx-muted);font-weight:400}
 /* ── Colunas de totais mensais por colaborador (fim da Grade Diária) ── */
 .tgrade td.gt-tot{background:#EEF2F7;font-weight:800;
   border-left:2px solid var(--indigo);color:var(--indigo)}
-/* Quebra de texto (normal, não mais nowrap): os títulos completos ("Total
-   de Faltas Injustificadas no Mês" etc.) quebram em várias linhas dentro do
-   .th-wrap (ver definição de .tgrade th .th-wrap acima) — sua altura fixa
-   de 44px garante que o cabeçalho não estoure e continue idêntico ao do
-   painel congelado. Fonte reduzida e line-height mais compacto para o
-   texto de 3-4 linhas caber sem cortar dentro dos 44px disponíveis. */
+/* Redesenho dos cabeçalhos de total: em vez de espremer a frase inteira
+   ("Total de Faltas Injustificadas no Mês") em letra microscópica quebrada
+   em 3-4 linhas — o que ficava ilegível — cada cabeçalho agora é um rótulo
+   CURTO em 2 níveis: um label principal (gtw-main, negrito, tamanho normal
+   de leitura) + uma legenda pequena "no mês" (gtw-sub, versalete) que dá o
+   contexto sem repetir "Total de..." por extenso. A frase completa continua
+   disponível no atributo title (tooltip ao passar o mouse). Isso permitiu
+   reduzir a altura do cabeçalho de volta a 38px (era 44px) e a largura da
+   coluna para 100px (era 112px) — mais compacto E mais legível ao mesmo
+   tempo, porque o texto visível é curto o bastante para não precisar de
+   fonte minúscula nem de 3+ linhas. */
 .tgrade th.gt-tot{background:var(--indigo);color:#fff!important;font-weight:800;
   border-left:2px solid rgba(255,255,255,.3)}
-.tgrade th.gt-tot .th-wrap{white-space:normal;word-break:break-word;
-  overflow:hidden;font-size:8.5px;line-height:9.8px;letter-spacing:.2px;padding:3px 5px}
+.tgrade th.gt-tot .th-wrap{flex-direction:column;gap:2px;padding:4px 4px;white-space:normal}
+.tgrade th.gt-tot .gtw-main{font-size:11px;font-weight:800;letter-spacing:0;
+  text-transform:none;line-height:12px}
+.tgrade th.gt-tot .gtw-sub{font-size:8px;font-weight:700;letter-spacing:.4px;
+  text-transform:uppercase;line-height:9px;opacity:.72}
 /* Cada cabeçalho de total ganha o fundo sólido da própria categoria —
    confirmado pixel a pixel inspecionando o dashboard Bimbo ao vivo
    (getComputedStyle): gtc-p=#1A56DB, gtc-fj=#ED7D31, gtc-fi=#ED0000,
@@ -918,13 +926,13 @@ img,svg{max-width:100%}
 
     <!-- KPIs -->
     <div id="sec-kpi" style="scroll-margin-top:130px">
-      <div class="sec-head"><span class="sec-title">Indicadores Gerais</span><div class="sec-line"></div></div>
+      <div class="sec-head"><span class="sec-title">Visão Geral · Indicadores Gerais</span><div class="sec-line"></div></div>
       <div class="kpi-grid" id="kpi-grid"></div>
     </div>
 
     <!-- GRADE DIÁRIA -->
     <div id="sec-grade" style="scroll-margin-top:130px">
-      <div class="sec-head"><span class="sec-title">Controle Diário de Presença</span><div class="sec-line"></div>
+      <div class="sec-head"><span class="sec-title">Grade Diária · Controle Diário de Presença</span><div class="sec-line"></div>
         <span style="font-size:11px;color:var(--tx-muted);white-space:nowrap">Marcações por colaborador · Estilo planilha</span>
       </div>
       <div class="tbl-card">
@@ -992,7 +1000,7 @@ img,svg{max-width:100%}
 
     <!-- GRÁFICOS -->
     <div id="sec-graficos" style="scroll-margin-top:130px">
-      <div class="sec-head"><span class="sec-title">Análise de Presença e Produção</span><div class="sec-line"></div></div>
+      <div class="sec-head"><span class="sec-title">Gráficos · Análise de Presença e Produção</span><div class="sec-line"></div></div>
 
       <div class="dim-section-title"><span></span>Presença &amp; Absenteísmo<span></span></div>
       <div class="g2">
@@ -1677,16 +1685,19 @@ function renderGrade(){
     return `<th class="${cls.trim()}" title="${geral?'Folga Geral':''}"><div class="th-wrap">${fmtDateShort(iso)}, ${weekdayShort(iso)}</div></th>`;
   }).join('');
   const headF = `<tr><th><div class="th-wrap">Colaborador</div></th><th><div class="th-wrap">Unidade</div></th><th><div class="th-wrap">Setor</div></th><th><div class="th-wrap">Turno</div></th></tr>`;
+  // Rótulo curto (legível, sem quebrar em várias linhas) + legenda "no mês"
+  // + frase completa só no tooltip (title) — ver comentário de design em
+  // ".tgrade th.gt-tot .th-wrap" no CSS.
   const totHeaders = [
-    {cls:'gt-tot gtc-p',   title:'Total de Presenças no Mês',                 txt:'Total de Presenças no Mês'},
-    {cls:'gt-tot gtc-fj',  title:'Total de Faltas Justificadas no Mês',       txt:'Total de Faltas Justificadas no Mês'},
-    {cls:'gt-tot gtc-fi',  title:'Total de Faltas Injustificadas no Mês',     txt:'Total de Faltas Injustificadas no Mês'},
-    {cls:'gt-tot gtc-flg', title:'Total de Folgas no Mês',                    txt:'Total de Folgas no Mês'},
-    {cls:'gt-tot gtc-he5', title:'Total de Horas Extras a 50% no Mês',        txt:'Total de Horas Extras a 50% no Mês'},
-    {cls:'gt-tot gtc-he1', title:'Total de Horas Extras a 100% no Mês',       txt:'Total de Horas Extras a 100% no Mês'},
-    {cls:'gt-tot',         title:'Horas Extras Totais no Mês',                txt:'Horas Extras Totais no Mês'},
+    {cls:'gt-tot gtc-p',   title:'Total de Presenças no Mês',                 main:'Presenças'},
+    {cls:'gt-tot gtc-fj',  title:'Total de Faltas Justificadas no Mês',       main:'Faltas Just.'},
+    {cls:'gt-tot gtc-fi',  title:'Total de Faltas Injustificadas no Mês',     main:'Faltas Injust.'},
+    {cls:'gt-tot gtc-flg', title:'Total de Folgas no Mês',                    main:'Folgas'},
+    {cls:'gt-tot gtc-he5', title:'Total de Horas Extras a 50% no Mês',        main:'HE 50%'},
+    {cls:'gt-tot gtc-he1', title:'Total de Horas Extras a 100% no Mês',       main:'HE 100%'},
+    {cls:'gt-tot',         title:'Horas Extras Totais no Mês',                main:'HE Total'},
   ];
-  const headTot = totHeaders.map(h=>`<th class="${h.cls}" title="${h.title}"><div class="th-wrap">${h.txt}</div></th>`).join('');
+  const headTot = totHeaders.map(h=>`<th class="${h.cls}" title="${h.title}"><div class="th-wrap"><span class="gtw-main">${h.main}</span><span class="gtw-sub">no mês</span></div></th>`).join('');
   const headS = `<tr>${headDates}${headTot}</tr>`;
 
   // table-layout:fixed exige largura explícita para todas as colunas do
@@ -1694,14 +1705,13 @@ function renderGrade(){
   // igualmente. Colgroup é reconstruído a cada render porque a quantidade de
   // colunas de dias varia por mês (28 a 31). O painel congelado (Colaborador/
   // Unidade/Setor/Turno) tem colgroup fixo, definido uma única vez no HTML.
-  // As 7 colunas de total (antigas 4 + novas 3 de Hora Extra) usam quebra de
-  // texto no cabeçalho (ver .th-wrap), com largura generosa (112px) para o
-  // texto completo respirar em 3–4 linhas sem ficar apertado.
+  // As 7 colunas de total usam rótulo curto no cabeçalho (ver .th-wrap), por
+  // isso cabem em 108px — mais estreitas que antes (112px) e mais legíveis.
   if(colgroupEl){
     colgroupEl.innerHTML =
       `<col span="${dateList.length}" style="width:84px">` +
-      '<col style="width:112px"><col style="width:112px"><col style="width:112px"><col style="width:112px">' +
-      '<col style="width:112px"><col style="width:112px"><col style="width:112px">';
+      '<col style="width:108px"><col style="width:108px"><col style="width:108px"><col style="width:108px">' +
+      '<col style="width:108px"><col style="width:108px"><col style="width:108px">';
   }
 
   let rowsF = '', rowsS = '';
