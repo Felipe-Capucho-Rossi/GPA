@@ -2923,23 +2923,67 @@ function renderHEEvolucao(){
   });
 }
 
+/* Cada um dos 6 gráficos desta seção é isolado em try/catch: se um deles
+   falhar por qualquer motivo (dado inesperado, elemento não encontrado
+   etc.), os outros 5 continuam renderizando normalmente — antes, uma
+   falha em UM gráfico interrompia a função inteira e "sumia" com todos os
+   gráficos seguintes na ordem (Turno/Setor/Cargo, que são construídos por
+   último). Também mostra um estado de erro visível no card em vez de
+   deixá-lo em branco silenciosamente. */
+function renderHEChartSafe(cardCanvasId, label, fn){
+  try {
+    fn();
+  } catch(e){
+    console.error('Falha ao renderizar gráfico de HE ('+label+'):', e);
+    const canvas = document.getElementById(cardCanvasId);
+    const wrap = canvas ? canvas.closest('.ch,.ch-donut') : null;
+    if(wrap) wrap.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--tx-muted);font-size:11px;text-align:center;padding:0 16px">Não foi possível carregar este gráfico. Tente atualizar a página.</div>';
+  }
+}
 function renderGraficosHE(){
   const mnum = MES_NUM[state.mes||MESES[MESES.length-1]];
 
-  renderHEDonut(mnum);
-  renderHEEvolucao();
+  renderHEChartSafe('chart-he-donut', 'Composição HE 50%×100%', ()=>renderHEDonut(mnum));
+  renderHEChartSafe('chart-he-evolucao', 'Evolução Mensal', renderHEEvolucao);
 
-  const stU = statsByUnidadeHE(mnum);
-  buildHEStackedVertical('chart-he-unidade', stU.map(x=>x.unidade.replace('GPA ','')), stU);
+  renderHEChartSafe('chart-he-unidade', 'HE por Unidade', ()=>{
+    const stU = statsByUnidadeHE(mnum);
+    buildHEStackedVertical('chart-he-unidade', stU.map(x=>x.unidade.replace('GPA ','')), stU);
+  });
 
-  const stT = statsByTurnoHE(mnum);
-  buildHEStackedVertical('chart-he-turno', stT.map(x=>x.turno), stT);
+  renderHEChartSafe('chart-he-turno', 'HE por Turno', ()=>{
+    const stT = statsByTurnoHE(mnum);
+    buildHEStackedVertical('chart-he-turno', stT.map(x=>x.turno), stT);
+  });
 
-  const stS = statsBySetorHE(mnum);
-  buildHEStackedHorizontal('chart-he-setor', 'ch-he-setor-wrap', 'he-setor-sub', 'setor', stS);
+  renderHEChartSafe('chart-he-setor', 'HE por Setor', ()=>{
+    const stS = statsBySetorHE(mnum);
+    buildHEStackedHorizontal('chart-he-setor', 'ch-he-setor-wrap', 'he-setor-sub', 'setor', stS);
+  });
 
-  const stF = statsByFuncaoHE(mnum);
-  buildHEStackedHorizontal('chart-he-cargo', 'ch-he-cargo-wrap', 'he-cargo-sub', 'funcao', stF);
+  renderHEChartSafe('chart-he-cargo', 'HE por Cargo', ()=>{
+    const stF = statsByFuncaoHE(mnum);
+    buildHEStackedHorizontal('chart-he-cargo', 'ch-he-cargo-wrap', 'he-cargo-sub', 'funcao', stF);
+  });
+
+  /* Os 6 gráficos acima usam Chart.js responsive:true, que mede o
+     contêiner (.ch/.ch-donut/.ch-hbar) no instante da criação. Nesta
+     página — muito longa, com uma tabela Grade pesada e 17 gráficos
+     criados na mesma passada síncrona — é possível que o layout ainda
+     não tenha se estabilizado (fontes web, reflow) no exato instante em
+     que um gráfico é construído, deixando-o "preso" com largura
+     incorreta até algo mais disparar um resize. Um resize() de segurança
+     dois frames depois (tempo de sobra para o layout assentar) corrige
+     isso sem custo perceptível — é a mesma técnica usada para o mesmo
+     problema em qualquer app com Chart.js + layout complexo. */
+  const raf = (typeof requestAnimationFrame==='function') ? requestAnimationFrame : (fn)=>setTimeout(fn,16);
+  raf(()=>raf(()=>{
+    ['chart-he-donut','chart-he-evolucao','chart-he-unidade','chart-he-turno','chart-he-setor','chart-he-cargo'].forEach(id=>{
+      const key = id==='chart-he-donut' ? 'heDonut' : id==='chart-he-evolucao' ? 'heEvo' : id;
+      const c = charts[key];
+      if(c && typeof c.resize==='function'){ try{ c.resize(); }catch(e){} }
+    });
+  }));
 }
 
 function renderCharts(){
