@@ -863,7 +863,7 @@ img,svg{max-width:100%}
         </div>
         <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
           <div class="fg"><label>Buscar Colaborador</label><input type="text" id="pi-busca" placeholder="Nome..."></div>
-          <span style="font-size:11px;color:var(--tx-secondary);padding-bottom:7px">Unidade e Turno: barra superior</span>
+          <span style="font-size:11px;color:var(--tx-secondary);padding-bottom:7px">Unidade, Turno e Setor: barra superior</span>
           <div style="margin-left:auto;font-size:11px;color:var(--tx-secondary);font-weight:600;padding-bottom:7px" id="pi-det-count"></div>
         </div>
         <div class="tbl-scroll" style="max-height:560px">
@@ -889,8 +889,7 @@ img,svg{max-width:100%}
       </div>
 
       <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:4px">
-        <div class="fg"><label>Setor</label><select id="dim-cargo"></select></div>
-        <div style="font-size:11px;color:var(--tx-secondary);padding-bottom:7px">Unidade e demais filtros: barra superior</div>
+        <div style="font-size:11px;color:var(--tx-secondary);padding-bottom:7px">Unidade e Setor: barra superior · Mês, Turno e Cargo não se aplicam (dimensionamento é um plano de vagas por Unidade/Setor, sem essa quebra)</div>
       </div>
 
       <div class="dim-cards-grid op-cards-grid" id="dim-cards"></div>
@@ -1167,7 +1166,7 @@ img,svg{max-width:100%}
       <div class="dim-kpi-row" id="he-kpi-row"></div>
 
       <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:4px">
-        <span style="font-size:11px;color:var(--tx-secondary)">Filtrado por Unidade e Mês da barra superior</span>
+        <span style="font-size:11px;color:var(--tx-secondary)">Unidade, Mês, Turno, Setor e Cargo: barra superior</span>
       </div>
 
       <div class="tbl-card">
@@ -1542,7 +1541,7 @@ function renderKPIs(){
 
   document.getElementById('fcount').textContent = colabCount + ' colaboradores selecionados';
 
-  const dim = DIM_DADOS.filter(d=> !state.unidade || d.unidade===state.unidade);
+  const dim = dimScope(state.unidade);
   const solicitado = dim.reduce((a,d)=>a+d.solicitado,0);
   const contratado = dim.reduce((a,d)=>a+d.contratado,0);
   const gap = contratado - solicitado;
@@ -2074,19 +2073,36 @@ function cfClass(val, t){
   return 'cf-alto';
 }
 
+/* DIM_DADOS.cargo é, na verdade, a mesma dimensão do filtro global "Setor"
+   (state.cargo) — confirmado comparando os valores: "SEPARAÇÃO",
+   "OPERADOR DE EMPILHADEIRA" e "EXPEDIÇÃO" batem exatamente com o domínio
+   de CARGOS. A única exceção é "SETOR 7801", que no Dimensionamento é um
+   agregado único, enquanto no filtro global (derivado do Espelho de Ponto)
+   esse mesmo setor aparece quebrado em "7801 - T3"/"7801 - T4" — por isso
+   os dois são tratados como equivalentes aqui. Esse helper é reaproveitado
+   em toda tela que usa DIM_DADOS (KPIs gerais, Dimensionamento, gráfico de
+   Quadro Solicitado×Contratados), para que o filtro de Setor da barra
+   superior funcione de forma consistente em TODOS os lugares que mostram
+   esse dado — antes só a seção Dimensionamento tinha um seletor de Setor
+   próprio (desconectado do filtro global), então usar o Setor da barra
+   superior não tinha nenhum efeito aqui, e parecia um filtro quebrado. */
+function dimCargoMatches(dimCargo, filterCargo){
+  if(!filterCargo) return true;
+  if(dimCargo === filterCargo) return true;
+  if(dimCargo === 'SETOR 7801' && (filterCargo === '7801 - T3' || filterCargo === '7801 - T4')) return true;
+  return false;
+}
+function dimScope(fu){
+  return DIM_DADOS.filter(d=> (!fu||d.unidade===fu) && dimCargoMatches(d.cargo, state.cargo));
+}
 function renderDimensionamento(){
-  // Unidade agora vem do filtro global do topbar (state.unidade) — só o
-  // Setor continua como filtro próprio desta seção, pois DIM_DADOS.cargo
-  // usa uma categorização de setor diferente da usada no filtro global de
-  // Cargo (que é sobre o cargo/função real do colaborador na presença).
-  const selC = document.getElementById('dim-cargo');
-  if(!selC.dataset.init){
-    populateSelect(selC, Array.from(new Set(DIM_DADOS.map(d=>d.cargo))).sort(), 'Todos');
-    selC.dataset.init='1';
-    selC.addEventListener('change', renderDimensionamento);
-  }
-  const fu = state.unidade, fc = selC.value;
-  const dados = DIM_DADOS.filter(d=> (!fu||d.unidade===fu) && (!fc||d.cargo===fc) );
+  // Unidade e Setor agora vêm inteiramente do filtro global do topbar —
+  // sem select próprio aqui (ver dimCargoMatches acima). Mês, Turno e Cargo
+  // (função) não têm efeito nesta seção porque o Dimensionamento é um plano
+  // de vagas fixo por Unidade/Setor — a planilha de origem não tem essa
+  // granularidade (não é uma medição diária como a presença).
+  const fu = state.unidade;
+  const dados = dimScope(fu);
 
   // KPIs
   const totS = dados.reduce((a,d)=>a+d.solicitado,0);
@@ -2491,6 +2507,9 @@ function renderProdIndDetalhe(fu){
     (PROD_IND_FULL_DADOS[u]||[]).forEach(c=> rows.push(Object.assign({unidade:u}, c)));
   });
   if(ft) rows = rows.filter(r=>r.turno===ft);
+  // Setor (state.cargo) agora também filtra esta tabela — o campo já vinha
+  // no dado (coluna Setor da tabela), só não estava ligado ao filtro global.
+  if(state.cargo) rows = rows.filter(r=>r.setor===state.cargo);
   if(busca) rows = rows.filter(r=>r.nome.toUpperCase().includes(busca));
   rows.sort((a,b)=> a.nome<b.nome ? -1 : a.nome>b.nome ? 1 : 0);
 
@@ -2547,11 +2566,20 @@ function renderHoraExtra(){
   const porUnidade = {};
   unidsList.forEach(u=> porUnidade[u] = {ex:0, en:0, colabsSet:new Set()});
 
+  // Turno/Setor/Cargo agora também filtram esta tabela-resumo — antes só
+  // Unidade e Mês eram aplicados aqui, mesmo os colaboradores (g/c) já
+  // trazendo turno/cargo/função como qualquer outra seção do dashboard.
+  // Isso destoava da tabela "Detalhamento por Colaborador" logo abaixo, que
+  // já respeitava os 5 filtros — parecia inconsistente/quebrado ao trocar
+  // Turno/Setor/Cargo e ver só uma das duas tabelas da seção reagir.
   DADOS.forEach(g=>{
     const u = g.unidade;
     if(!porUnidade[u]) return; // fora do escopo de unidade selecionado
+    if(state.turno && g.turno!==state.turno) return;
     (g.colaboradores||[]).forEach(c=>{
       if(!c.he) return;
+      if(state.cargo && c.cargo!==state.cargo) return;
+      if(state.funcao && c.funcao!==state.funcao) return;
       let teve = false;
       Object.keys(c.he).forEach(iso=>{
         const mm = parseInt(iso.slice(5,7),10);
@@ -3031,7 +3059,7 @@ function renderMovimentacoes(){
   // (DIM_DADOS.solicitado / .contratado), nunca misturada com contagem de
   // dias de presença (que é outra grandeza e outro gráfico, abaixo).
   destroyChart('quadro');
-  const dim = DIM_DADOS.filter(d=>!fu || d.unidade===fu);
+  const dim = dimScope(fu);
   const byUnidQuadro = {};
   dim.forEach(d=>{
     if(!byUnidQuadro[d.unidade]) byUnidQuadro[d.unidade] = {solicitado:0, contratado:0};
@@ -3053,15 +3081,21 @@ function renderMovimentacoes(){
   // Mesma lógica de denominador usada no cálculo de % Presença em todo o
   // dashboard, garantindo congruência entre os indicadores.
   destroyChart('presencaPrevista');
+  // Antes filtrava só por Unidade (ALL_EMP.filter(e=>e.unidade===u)),
+  // ignorando Turno/Setor/Cargo mesmo esses campos existindo em ALL_EMP —
+  // por isso o gráfico parecia "travado" ao usar esses filtros. Agora usa
+  // o mesmo critério de matchesFilter() para os 3 filtros restantes.
   const labelsPres = UNIDS.filter(u=>!fu || u===fu);
+  const empsPorUnidPres = u => ALL_EMP.filter(e=> e.unidade===u
+    && (!state.turno||e.turno===state.turno)
+    && (!state.cargo||e.cargo===state.cargo)
+    && (!state.funcao||e.funcao===state.funcao));
   const previstas = labelsPres.map(u=>{
-    const emps = ALL_EMP.filter(e=>e.unidade===u);
-    const t = calcTotais(emps, mesDateList(state.mes||MESES[0]));
+    const t = calcTotais(empsPorUnidPres(u), mesDateList(state.mes||MESES[0]));
     return t.P+t.FJ+t.FI;
   });
   const reais = labelsPres.map(u=>{
-    const emps = ALL_EMP.filter(e=>e.unidade===u);
-    return calcTotais(emps, mesDateList(state.mes||MESES[0])).P;
+    return calcTotais(empsPorUnidPres(u), mesDateList(state.mes||MESES[0])).P;
   });
   charts.presencaPrevista = new Chart(document.getElementById('chart-presenca-prevista'), {
     data:{ labels: labelsPres, datasets:[
