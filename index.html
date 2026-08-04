@@ -387,15 +387,24 @@ table.tind td.pi-dia-vazio{color:var(--tx-muted);font-weight:400}
 /* Altura idêntica nas DUAS tabelas: cada uma tem seu próprio <thead>
    independente, então qualquer diferença de conteúdo entre eles (uma
    célula quebrando linha, por exemplo) desalinha o corpo inteiro da
-   tabela rolável em relação ao painel congelado. Conferido pixel a
-   pixel contra a referência Bimbo (que usa exatamente essa arquitetura
-   de 2 tabelas): lá o cabeçalho de data é 1 linha só ("24/07/26, Sex",
-   sem quebra) e todo th mede 28px (14px padding + 14px de texto) — por
-   isso aqui também usamos data em 1 linha e altura travada em 28px,
-   igual à referência, em vez de inventar um valor.  */
-.tgrade th{background:var(--indigo);color:#fff;padding:7px 8px;text-align:center;font-weight:700;
-  font-size:10px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;vertical-align:middle;
-  line-height:14px;position:sticky;top:0;z-index:3;height:44px;box-sizing:border-box;overflow:hidden}
+   tabela rolável em relação ao painel congelado.
+   IMPORTANTE: em células de tabela (th/td), a propriedade height é um
+   MÍNIMO, não um teto — mesmo com overflow:hidden, a linha ainda cresce
+   para caber o conteúdo mais alto. Isso é exatamente o que desalinhava as
+   duas tabelas depois que os cabeçalhos de total passaram a quebrar em
+   várias linhas: só o <thead> do painel rolável (que tem essas colunas)
+   ficava mais alto, o do painel congelado (que não tem) continuava com 1
+   linha só — as duas tabelas cresciam para alturas diferentes.
+   Correção: TODO texto de th (nas duas tabelas) fica dentro de um
+   .th-wrap com altura FIXA (elemento comum, não célula de tabela — nele
+   height realmente é um teto), então as duas tabelas ficam com a mesma
+   altura de cabeçalho não importa se o texto quebra ou não. */
+.tgrade th{background:var(--indigo);color:#fff;text-align:center;font-weight:700;
+  font-size:10px;text-transform:uppercase;letter-spacing:.5px;vertical-align:middle;
+  position:sticky;top:0;z-index:3;height:44px;box-sizing:border-box;overflow:hidden;padding:0}
+.tgrade th .th-wrap{display:flex;align-items:center;justify-content:center;width:100%;height:44px;
+  box-sizing:border-box;overflow:hidden;padding:7px 8px;line-height:14px;white-space:nowrap;text-align:center}
+.tgrade-frozen th:nth-child(1) .th-wrap{justify-content:flex-start;text-align:left}
 .tgrade td{padding:5px 7px;text-align:center;vertical-align:middle;border-bottom:1px solid var(--border-light);
   border-right:1px solid var(--border-light);white-space:nowrap;font-size:11.5px;line-height:15px}
 .tgrade-frozen{width:420px}
@@ -445,19 +454,15 @@ table.tind td.pi-dia-vazio{color:var(--tx-muted);font-weight:400}
 .tgrade td.gt-tot{background:#EEF2F7;font-weight:800;
   border-left:2px solid var(--indigo);color:var(--indigo)}
 /* Quebra de texto (normal, não mais nowrap): os títulos completos ("Total
-   de Faltas Injustificadas no Mês" etc.) só cabem em colunas mais estreitas
-   se o texto quebrar em várias linhas. Para isso o thead inteiro (regra
-   .tgrade th acima) ganhou altura maior (44px) — como o painel congelado e
-   o painel rolável compartilham a MESMA regra .tgrade th, as duas linhas de
-   cabeçalho continuam com a mesma altura entre si mesmo com texto quebrado
-   só nas colunas de total (painel congelado não tem essas colunas, mas
-   herda a mesma altura de linha, evitando o desalinhamento entre os dois
-   <thead> independentes). Fonte reduzida e line-height mais compacto nos
-   totais para o texto de 3-4 linhas caber sem cortar (overflow do th pai
-   seria clipado). */
+   de Faltas Injustificadas no Mês" etc.) quebram em várias linhas dentro do
+   .th-wrap (ver definição de .tgrade th .th-wrap acima) — sua altura fixa
+   de 44px garante que o cabeçalho não estoure e continue idêntico ao do
+   painel congelado. Fonte reduzida e line-height mais compacto para o
+   texto de 3-4 linhas caber sem cortar dentro dos 44px disponíveis. */
 .tgrade th.gt-tot{background:var(--indigo);color:#fff!important;font-weight:800;
-  border-left:2px solid rgba(255,255,255,.3);white-space:normal;word-break:break-word;
-  overflow:hidden;font-size:8.3px;line-height:9.5px;letter-spacing:.2px;padding:4px 4px}
+  border-left:2px solid rgba(255,255,255,.3)}
+.tgrade th.gt-tot .th-wrap{white-space:normal;word-break:break-word;
+  overflow:hidden;font-size:8.5px;line-height:9.8px;letter-spacing:.2px;padding:3px 5px}
 /* Cada cabeçalho de total ganha o fundo sólido da própria categoria —
    confirmado pixel a pixel inspecionando o dashboard Bimbo ao vivo
    (getComputedStyle): gtc-p=#1A56DB, gtc-fj=#ED7D31, gtc-fi=#ED0000,
@@ -1216,6 +1221,8 @@ img,svg{max-width:100%}
       <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);margin-bottom:16px">
         <span style="font-size:11px;color:var(--tx-secondary)">Dados: Espelhos de Ponto EzPoint · Unidade, Mês, Turno, Setor e Cargo: barra superior · eixo secundário (linha) = média de horas extras por colaborador que realizou HE</span>
       </div>
+
+      <div class="dim-section-title"><span></span>Por Unidade<span></span></div>
       <div class="g2">
         <div class="chart-card">
           <div class="chart-head"><div class="chart-title">Horas Extras a 50% por Unidade</div><div class="chart-sub">Total de horas (barras) × média por colaborador (linha, eixo secundário)</div></div>
@@ -1227,6 +1234,44 @@ img,svg{max-width:100%}
           <div class="chart-divider"></div>
           <div class="chart-body"><div class="ch"><canvas id="chart-he100-unidade"></canvas></div></div>
         </div>
+      </div>
+
+      <div class="dim-section-title"><span></span>Por Turno<span></span></div>
+      <div class="g2">
+        <div class="chart-card">
+          <div class="chart-head"><div class="chart-title">Horas Extras a 50% por Turno</div><div class="chart-sub">Total de horas (barras) × média por colaborador (linha, eixo secundário)</div></div>
+          <div class="chart-divider"></div>
+          <div class="chart-body"><div class="ch"><canvas id="chart-he50-turno"></canvas></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div class="chart-title">Horas Extras a 100% por Turno</div><div class="chart-sub">Total de horas (barras) × média por colaborador (linha, eixo secundário)</div></div>
+          <div class="chart-divider"></div>
+          <div class="chart-body"><div class="ch"><canvas id="chart-he100-turno"></canvas></div></div>
+        </div>
+      </div>
+
+      <div class="dim-section-title"><span></span>Por Setor<span></span></div>
+      <div class="chart-card">
+        <div class="chart-head"><div class="chart-title">Horas Extras a 50% por Setor</div><div class="chart-sub" id="he50-setor-sub">Total de horas (barras) × média por colaborador (linha, eixo secundário) · ordenado por total</div></div>
+        <div class="chart-divider"></div>
+        <div class="chart-body"><div class="ch ch-hbar" id="ch-he50-setor-wrap"><canvas id="chart-he50-setor"></canvas></div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><div class="chart-title">Horas Extras a 100% por Setor</div><div class="chart-sub" id="he100-setor-sub">Total de horas (barras) × média por colaborador (linha, eixo secundário) · ordenado por total</div></div>
+        <div class="chart-divider"></div>
+        <div class="chart-body"><div class="ch ch-hbar" id="ch-he100-setor-wrap"><canvas id="chart-he100-setor"></canvas></div></div>
+      </div>
+
+      <div class="dim-section-title"><span></span>Por Cargo<span></span></div>
+      <div class="chart-card">
+        <div class="chart-head"><div class="chart-title">Horas Extras a 50% por Cargo</div><div class="chart-sub" id="he50-cargo-sub">Total de horas (barras) × média por colaborador (linha, eixo secundário) · ordenado por total</div></div>
+        <div class="chart-divider"></div>
+        <div class="chart-body"><div class="ch ch-hbar" id="ch-he50-cargo-wrap"><canvas id="chart-he50-cargo"></canvas></div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><div class="chart-title">Horas Extras a 100% por Cargo</div><div class="chart-sub" id="he100-cargo-sub">Total de horas (barras) × média por colaborador (linha, eixo secundário) · ordenado por total</div></div>
+        <div class="chart-divider"></div>
+        <div class="chart-body"><div class="ch ch-hbar" id="ch-he100-cargo-wrap"><canvas id="chart-he100-cargo"></canvas></div></div>
       </div>
     </div>
 
@@ -1616,24 +1661,34 @@ function renderGrade(){
     const wknd = isWeekend(iso);
     const geral = !workedSet[iso];
     const cls = (wknd?'th-weekend ':'') + (geral?'oa-vermelho':'');
-    return `<th class="${cls.trim()}" title="${geral?'Folga Geral':''}">${fmtDateShort(iso)}, ${weekdayShort(iso)}</th>`;
+    return `<th class="${cls.trim()}" title="${geral?'Folga Geral':''}"><div class="th-wrap">${fmtDateShort(iso)}, ${weekdayShort(iso)}</div></th>`;
   }).join('');
-  const headF = `<tr><th>Colaborador</th><th>Unidade</th><th>Setor</th><th>Turno</th></tr>`;
-  const headS = `<tr>${headDates}<th class="gt-tot gtc-p" title="Total de Presenças no Mês">Total de Presenças no Mês</th><th class="gt-tot gtc-fj" title="Total de Faltas Justificadas no Mês">Total de Faltas Justificadas no Mês</th><th class="gt-tot gtc-fi" title="Total de Faltas Injustificadas no Mês">Total de Faltas Injustificadas no Mês</th><th class="gt-tot gtc-flg" title="Total de Folgas no Mês">Total de Folgas no Mês</th><th class="gt-tot gtc-he5" title="Total de Horas Extras a 50% no Mês">Total de Horas Extras a 50% no Mês</th><th class="gt-tot gtc-he1" title="Total de Horas Extras a 100% no Mês">Total de Horas Extras a 100% no Mês</th><th class="gt-tot" title="Horas Extras Totais no Mês">Horas Extras Totais no Mês</th></tr>`;
+  const headF = `<tr><th><div class="th-wrap">Colaborador</div></th><th><div class="th-wrap">Unidade</div></th><th><div class="th-wrap">Setor</div></th><th><div class="th-wrap">Turno</div></th></tr>`;
+  const totHeaders = [
+    {cls:'gt-tot gtc-p',   title:'Total de Presenças no Mês',                 txt:'Total de Presenças no Mês'},
+    {cls:'gt-tot gtc-fj',  title:'Total de Faltas Justificadas no Mês',       txt:'Total de Faltas Justificadas no Mês'},
+    {cls:'gt-tot gtc-fi',  title:'Total de Faltas Injustificadas no Mês',     txt:'Total de Faltas Injustificadas no Mês'},
+    {cls:'gt-tot gtc-flg', title:'Total de Folgas no Mês',                    txt:'Total de Folgas no Mês'},
+    {cls:'gt-tot gtc-he5', title:'Total de Horas Extras a 50% no Mês',        txt:'Total de Horas Extras a 50% no Mês'},
+    {cls:'gt-tot gtc-he1', title:'Total de Horas Extras a 100% no Mês',       txt:'Total de Horas Extras a 100% no Mês'},
+    {cls:'gt-tot',         title:'Horas Extras Totais no Mês',                txt:'Horas Extras Totais no Mês'},
+  ];
+  const headTot = totHeaders.map(h=>`<th class="${h.cls}" title="${h.title}"><div class="th-wrap">${h.txt}</div></th>`).join('');
+  const headS = `<tr>${headDates}${headTot}</tr>`;
 
   // table-layout:fixed exige largura explícita para todas as colunas do
   // painel rolável — senão as colunas de dias e de totais ficam espremidas
   // igualmente. Colgroup é reconstruído a cada render porque a quantidade de
   // colunas de dias varia por mês (28 a 31). O painel congelado (Colaborador/
   // Unidade/Setor/Turno) tem colgroup fixo, definido uma única vez no HTML.
-  // As 7 colunas de total (antigas 4 + novas 3 de Hora Extra) agora usam
-  // quebra de texto no cabeçalho, então cabem em colunas mais estreitas
-  // (90px) do que antes (110–135px sem quebra).
+  // As 7 colunas de total (antigas 4 + novas 3 de Hora Extra) usam quebra de
+  // texto no cabeçalho (ver .th-wrap), com largura generosa (112px) para o
+  // texto completo respirar em 3–4 linhas sem ficar apertado.
   if(colgroupEl){
     colgroupEl.innerHTML =
       `<col span="${dateList.length}" style="width:84px">` +
-      '<col style="width:90px"><col style="width:90px"><col style="width:90px"><col style="width:90px">' +
-      '<col style="width:90px"><col style="width:90px"><col style="width:90px">';
+      '<col style="width:112px"><col style="width:112px"><col style="width:112px"><col style="width:112px">' +
+      '<col style="width:112px"><col style="width:112px"><col style="width:112px">';
   }
 
   let rowsF = '', rowsS = '';
@@ -2200,6 +2255,24 @@ function optBarsSec(y1Label){
     }
   };
 }
+/* Igual a optBarsSec(), mas para gráficos HORIZONTAIS (indexAxis:'y') — usado
+   em Setor e Cargo, onde há muitas categorias e barras verticais ficariam
+   ilegíveis (mesmo raciocínio de optBarsH()). Com indexAxis:'y' o eixo de
+   CATEGORIA é o "y" e os eixos de VALOR viram "x" (total, embaixo) e "x1"
+   (média por colaborador, em cima) — mesma barra+linha com eixo secundário,
+   só que na horizontal. */
+function optBarsHSec(x1Label){
+  return {
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:true, position:'bottom', labels:{font:{size:11,family:'Inter'}, boxWidth:12, usePointStyle:true, color:'#4B5768'}},
+      tooltip:{bodyFont:{family:'Inter'}, callbacks:{label:ctx=>ctx.dataset.label+': '+hoursToHHMM(ctx.parsed.x)+'h'}} },
+    scales:{
+      x:{beginAtZero:true, position:'bottom', grid:{color:'#EEF1F5'}, ticks:{color:'#8FA8C4', font:{size:10}}, title:{display:true, text:'Total (h)', color:'#8FA8C4', font:{size:10.5,family:'Inter',weight:'600'}}},
+      x1:{beginAtZero:true, position:'top', grid:{display:false}, ticks:{color:'#8FA8C4', font:{size:10}}, title:{display:true, text: x1Label||'Média por colaborador (h)', color:'#8FA8C4', font:{size:10.5,family:'Inter',weight:'600'}}},
+      y:{grid:{display:false}, ticks:{color:'#0F1B2D', font:{size:10.5,family:'Inter',weight:'600'}}}
+    }
+  };
+}
 
 let charts = {};
 function destroyChart(id){ if(charts[id]){ charts[id].destroy(); delete charts[id]; } }
@@ -2591,56 +2664,140 @@ function renderHoraExtraDetalhe(mnum){
 }
 
 /* ===== Gráficos de Gestão de Horas Extras (HE 50% / HE 100%) =====
-   Mesmo critério de "por Unidade" já usado nos demais gráficos comparativos
-   do dashboard (statsByUnidade, c1/c2 etc.): sempre mostra as 3 unidades
-   lado a lado, respeitando Mês/Turno/Setor/Cargo da barra superior — a
-   comparação entre unidades é o propósito do gráfico, por isso o filtro de
-   Unidade não restringe as categorias do eixo X (mesmo padrão do gráfico
-   "% Presença por Unidade"). */
-function statsByUnidadeHE(mnum){
-  return UNIDS.map(u=>{
-    let totalH5=0, totalH1=0, nH5=0, nH1=0;
+   Núcleo de agregação único (heAggregate) reaproveitado pelas 4 dimensões
+   (Unidade/Turno/Setor/Cargo) — cada uma passa seu próprio filterFn que
+   aplica TODOS os filtros globais exceto a própria dimensão que está sendo
+   comparada (mesmo princípio já usado em statsByUnidade/statsByTurno/
+   statsByCargo/statsByFuncao para os gráficos de presença): a dimensão do
+   próprio gráfico não se autofiltra, senão o gráfico compararia só a barra
+   selecionada contra ela mesma. */
+function heAggregate(mnum, filterFn){
+  let totalH5=0, totalH1=0, nH5=0, nH1=0;
+  UNIDS.forEach(u=>{
     (HE_DETALHE_DADOS[u]||[]).forEach(emp=>{
-      if(state.turno && emp.turno!==state.turno) return;
-      if(state.cargo && emp.setor!==state.cargo) return;
-      if(state.funcao && emp.cargo!==state.funcao) return;
+      if(!filterFn(emp, u)) return;
       let empH5=0, empH1=0;
       Object.keys(emp.dias).forEach(iso=>{
-        const mm = parseInt(iso.slice(5,7),10);
-        if(mm !== mnum) return;
+        if(parseInt(iso.slice(5,7),10) !== mnum) return;
         const d = emp.dias[iso];
         empH5 += d.h5||0; empH1 += d.h1||0;
       });
       if(empH5>0){ totalH5+=empH5; nH5++; }
       if(empH1>0){ totalH1+=empH1; nH1++; }
     });
-    return { unidade:u, totalH5, totalH1, avgH5: nH5? totalH5/nH5 : 0, avgH1: nH1? totalH1/nH1 : 0, nH5, nH1 };
   });
+  return { totalH5, totalH1, avgH5: nH5? totalH5/nH5 : 0, avgH1: nH1? totalH1/nH1 : 0, nH5, nH1 };
 }
-function renderGraficosHE(){
-  const mnum = MES_NUM[state.mes||MESES[MESES.length-1]];
-  const st = statsByUnidadeHE(mnum);
-  const unidLabels = st.map(x=>x.unidade.replace('GPA ',''));
+/* Sempre mostra as 3 unidades lado a lado (Unidade é a própria dimensão do
+   gráfico, por isso state.unidade não filtra aqui) — mesmo padrão do
+   gráfico "% Presença por Unidade". */
+function statsByUnidadeHE(mnum){
+  return UNIDS.map(u=>({ unidade:u, ...heAggregate(mnum, (emp,uu)=> uu===u
+    && (!state.turno||emp.turno===state.turno)
+    && (!state.cargo||emp.setor===state.cargo)
+    && (!state.funcao||emp.cargo===state.funcao)) }));
+}
+function statsByTurnoHE(mnum){
+  return TURNOS.map(tu=>({ turno:tu, ...heAggregate(mnum, (emp,u)=> emp.turno===tu
+    && (!state.unidade||u===state.unidade)
+    && (!state.cargo||emp.setor===state.cargo)
+    && (!state.funcao||emp.cargo===state.funcao)) }));
+}
+/* "Setor" aqui é o campo emp.setor (mesmo campo do filtro global "Setor" —
+   state.cargo, ver comentário de FUNCOES/CARGOS logo acima). */
+function statsBySetorHE(mnum){
+  return CARGOS.map(cg=>({ setor:cg, ...heAggregate(mnum, (emp,u)=> emp.setor===cg
+    && (!state.unidade||u===state.unidade)
+    && (!state.turno||emp.turno===state.turno)
+    && (!state.funcao||emp.cargo===state.funcao)) }));
+}
+/* "Cargo" aqui é o campo emp.cargo = função real do colaborador (mesmo
+   campo do filtro global "Cargo" — state.funcao). */
+function statsByFuncaoHE(mnum){
+  return FUNCOES.map(fn=>({ funcao:fn, ...heAggregate(mnum, (emp,u)=> emp.cargo===fn
+    && (!state.unidade||u===state.unidade)
+    && (!state.turno||emp.turno===state.turno)
+    && (!state.cargo||emp.setor===state.cargo)) }));
+}
 
-  destroyChart('cHE50');
-  charts.cHE50 = new Chart(document.getElementById('chart-he50-unidade'), {
-    data:{ labels: unidLabels,
+/* Constrói um par de gráficos (HE 50% / HE 100%) verticais com eixo
+   secundário, para dimensões com poucas categorias (Unidade, Turno). */
+function buildHEChartPairVertical(idPrefix, canvasIdHE5, canvasIdHE1, labels, stats){
+  destroyChart(idPrefix+'50');
+  charts[idPrefix+'50'] = new Chart(document.getElementById(canvasIdHE5), {
+    data:{ labels,
       datasets:[
-        {type:'bar', label:'Total HE 50% (h)', data:st.map(x=>+x.totalH5.toFixed(2)), backgroundColor:C.blue, borderRadius:5, yAxisID:'y', order:1},
-        {type:'line', label:'Média HE 50% por colaborador (h)', data:st.map(x=>+x.avgH5.toFixed(2)), borderColor:C.green, backgroundColor:'transparent', borderWidth:1.5, pointRadius:3, pointBackgroundColor:C.green, yAxisID:'y1', order:0}
+        {type:'bar', label:'Total HE 50% (h)', data:stats.map(x=>+x.totalH5.toFixed(2)), backgroundColor:C.blue, borderRadius:5, yAxisID:'y', order:1},
+        {type:'line', label:'Média HE 50% por colaborador (h)', data:stats.map(x=>+x.avgH5.toFixed(2)), borderColor:C.green, backgroundColor:'transparent', borderWidth:1.5, pointRadius:3, pointBackgroundColor:C.green, yAxisID:'y1', order:0}
       ]},
     options: optBarsSec('Média HE 50% (h)')
   });
-
-  destroyChart('cHE100');
-  charts.cHE100 = new Chart(document.getElementById('chart-he100-unidade'), {
-    data:{ labels: unidLabels,
+  destroyChart(idPrefix+'100');
+  charts[idPrefix+'100'] = new Chart(document.getElementById(canvasIdHE1), {
+    data:{ labels,
       datasets:[
-        {type:'bar', label:'Total HE 100% (h)', data:st.map(x=>+x.totalH1.toFixed(2)), backgroundColor:C.red, borderRadius:5, yAxisID:'y', order:1},
-        {type:'line', label:'Média HE 100% por colaborador (h)', data:st.map(x=>+x.avgH1.toFixed(2)), borderColor:C.green, backgroundColor:'transparent', borderWidth:1.5, pointRadius:3, pointBackgroundColor:C.green, yAxisID:'y1', order:0}
+        {type:'bar', label:'Total HE 100% (h)', data:stats.map(x=>+x.totalH1.toFixed(2)), backgroundColor:C.red, borderRadius:5, yAxisID:'y', order:1},
+        {type:'line', label:'Média HE 100% por colaborador (h)', data:stats.map(x=>+x.avgH1.toFixed(2)), borderColor:C.green, backgroundColor:'transparent', borderWidth:1.5, pointRadius:3, pointBackgroundColor:C.green, yAxisID:'y1', order:0}
       ]},
     options: optBarsSec('Média HE 100% (h)')
   });
+}
+
+/* Constrói um par de gráficos (HE 50% / HE 100%) HORIZONTAIS com eixo
+   secundário, para dimensões com muitas categorias (Setor, Cargo) — só
+   entram categorias com HE>0 daquele tipo específico (50% ou 100%),
+   ordenadas do maior para o menor total, e a altura do canvas escala com a
+   quantidade de categorias (mesmo padrão de chart-cargo/chart-funcao). */
+function buildHEChartPairHorizontal(idPrefix, canvasIdHE5, canvasIdHE1, wrapIdHE5, wrapIdHE1, subIdHE5, subIdHE1, catField, stats){
+  // Categoria em branco = ruído de dados (mesmo critério já usado em
+  // byCargoClean/byFuncaoClean na seção "Gráficos" — x.cargo &&/x.funcao &&).
+  const rows5 = stats.filter(x=>x[catField] && x.totalH5>0).sort((a,b)=>b.totalH5-a.totalH5);
+  const rows1 = stats.filter(x=>x[catField] && x.totalH1>0).sort((a,b)=>b.totalH1-a.totalH1);
+  const trunc = s => (s||'').length>28 ? (s||'').slice(0,26)+'…' : (s||'');
+
+  const wrap5 = document.getElementById(wrapIdHE5);
+  if(wrap5) wrap5.style.height = Math.min(420, Math.max(180, rows5.length*26+50))+'px';
+  destroyChart(idPrefix+'50');
+  charts[idPrefix+'50'] = new Chart(document.getElementById(canvasIdHE5), {
+    data:{ labels: rows5.map(x=>trunc(x[catField])),
+      datasets:[
+        {type:'bar', label:'Total HE 50% (h)', data:rows5.map(x=>+x.totalH5.toFixed(2)), backgroundColor:C.blue, borderRadius:4, barPercentage:.72, xAxisID:'x', order:1},
+        {type:'line', label:'Média HE 50% por colaborador (h)', data:rows5.map(x=>+x.avgH5.toFixed(2)), borderColor:C.green, backgroundColor:'transparent', borderWidth:1.5, pointRadius:3, pointBackgroundColor:C.green, xAxisID:'x1', order:0}
+      ]},
+    options: optBarsHSec('Média HE 50% (h)')
+  });
+  const subEl5 = document.getElementById(subIdHE5);
+  if(subEl5) subEl5.textContent = rows5.length ? `Total de horas (barras) × média por colaborador (linha, eixo secundário) · ${rows5.length} categoria${rows5.length===1?'':'s'} com HE 50% · ordenado por total` : 'Nenhum registro de HE 50% para os filtros selecionados';
+
+  const wrap1 = document.getElementById(wrapIdHE1);
+  if(wrap1) wrap1.style.height = Math.min(420, Math.max(180, rows1.length*26+50))+'px';
+  destroyChart(idPrefix+'100');
+  charts[idPrefix+'100'] = new Chart(document.getElementById(canvasIdHE1), {
+    data:{ labels: rows1.map(x=>trunc(x[catField])),
+      datasets:[
+        {type:'bar', label:'Total HE 100% (h)', data:rows1.map(x=>+x.totalH1.toFixed(2)), backgroundColor:C.red, borderRadius:4, barPercentage:.72, xAxisID:'x', order:1},
+        {type:'line', label:'Média HE 100% por colaborador (h)', data:rows1.map(x=>+x.avgH1.toFixed(2)), borderColor:C.green, backgroundColor:'transparent', borderWidth:1.5, pointRadius:3, pointBackgroundColor:C.green, xAxisID:'x1', order:0}
+      ]},
+    options: optBarsHSec('Média HE 100% (h)')
+  });
+  const subEl1 = document.getElementById(subIdHE1);
+  if(subEl1) subEl1.textContent = rows1.length ? `Total de horas (barras) × média por colaborador (linha, eixo secundário) · ${rows1.length} categoria${rows1.length===1?'':'s'} com HE 100% · ordenado por total` : 'Nenhum registro de HE 100% para os filtros selecionados';
+}
+
+function renderGraficosHE(){
+  const mnum = MES_NUM[state.mes||MESES[MESES.length-1]];
+
+  const stU = statsByUnidadeHE(mnum);
+  buildHEChartPairVertical('cHE', 'chart-he50-unidade', 'chart-he100-unidade', stU.map(x=>x.unidade.replace('GPA ','')), stU);
+
+  const stT = statsByTurnoHE(mnum);
+  buildHEChartPairVertical('cHETurno', 'chart-he50-turno', 'chart-he100-turno', stT.map(x=>x.turno), stT);
+
+  const stS = statsBySetorHE(mnum);
+  buildHEChartPairHorizontal('cHESetor', 'chart-he50-setor', 'chart-he100-setor', 'ch-he50-setor-wrap', 'ch-he100-setor-wrap', 'he50-setor-sub', 'he100-setor-sub', 'setor', stS);
+
+  const stF = statsByFuncaoHE(mnum);
+  buildHEChartPairHorizontal('cHECargo', 'chart-he50-cargo', 'chart-he100-cargo', 'ch-he50-cargo-wrap', 'ch-he100-cargo-wrap', 'he50-cargo-sub', 'he100-cargo-sub', 'funcao', stF);
 }
 
 function renderCharts(){
