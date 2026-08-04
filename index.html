@@ -395,7 +395,7 @@ table.tind td.pi-dia-vazio{color:var(--tx-muted);font-weight:400}
    igual à referência, em vez de inventar um valor.  */
 .tgrade th{background:var(--indigo);color:#fff;padding:7px 8px;text-align:center;font-weight:700;
   font-size:10px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;vertical-align:middle;
-  line-height:14px;position:sticky;top:0;z-index:3;height:28px;box-sizing:border-box;overflow:hidden}
+  line-height:14px;position:sticky;top:0;z-index:3;height:44px;box-sizing:border-box;overflow:hidden}
 .tgrade td{padding:5px 7px;text-align:center;vertical-align:middle;border-bottom:1px solid var(--border-light);
   border-right:1px solid var(--border-light);white-space:nowrap;font-size:11.5px;line-height:15px}
 .tgrade-frozen{width:420px}
@@ -444,24 +444,34 @@ table.tind td.pi-dia-vazio{color:var(--tx-muted);font-weight:400}
 /* ── Colunas de totais mensais por colaborador (fim da Grade Diária) ── */
 .tgrade td.gt-tot{background:#EEF2F7;font-weight:800;
   border-left:2px solid var(--indigo);color:var(--indigo)}
-/* nowrap (não normal): com white-space:normal o texto "Total Faltas
-   Injustificadas" quebrava em 2-3 linhas nessa coluna estreita, o que
-   esticava só o thead do painel rolável além do painel congelado —
-   reintroduzia o mesmo desalinhamento mesmo com altura travada, porque
-   height em th/td é um mínimo, não um teto. Confirmado contra a
-   referência Bimbo: lá também é nowrap, só que com colunas bem mais
-   largas (183–252px); aqui usamos texto já abreviado + nowrap + largura
-   maior (ver colgroup) + ellipsis de segurança. */
+/* Quebra de texto (normal, não mais nowrap): os títulos completos ("Total
+   de Faltas Injustificadas no Mês" etc.) só cabem em colunas mais estreitas
+   se o texto quebrar em várias linhas. Para isso o thead inteiro (regra
+   .tgrade th acima) ganhou altura maior (44px) — como o painel congelado e
+   o painel rolável compartilham a MESMA regra .tgrade th, as duas linhas de
+   cabeçalho continuam com a mesma altura entre si mesmo com texto quebrado
+   só nas colunas de total (painel congelado não tem essas colunas, mas
+   herda a mesma altura de linha, evitando o desalinhamento entre os dois
+   <thead> independentes). Fonte reduzida e line-height mais compacto nos
+   totais para o texto de 3-4 linhas caber sem cortar (overflow do th pai
+   seria clipado). */
 .tgrade th.gt-tot{background:var(--indigo);color:#fff!important;font-weight:800;
-  border-left:2px solid rgba(255,255,255,.3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  border-left:2px solid rgba(255,255,255,.3);white-space:normal;word-break:break-word;
+  overflow:hidden;font-size:8.3px;line-height:9.5px;letter-spacing:.2px;padding:4px 4px}
 /* Cada cabeçalho de total ganha o fundo sólido da própria categoria —
    confirmado pixel a pixel inspecionando o dashboard Bimbo ao vivo
    (getComputedStyle): gtc-p=#1A56DB, gtc-fj=#ED7D31, gtc-fi=#ED0000,
-   gtc-flg=#000, texto branco em todos. */
+   gtc-flg=#000, texto branco em todos. Colunas de Hora Extra (novas) usam
+   roxo (mesma cor do indicador "Hora Extra" já usado na grade — bolinha
+   .mc-ot / mc-fer) para HE 50%, vermelho (mesma cor de destaque de HE 100%
+   já usado na tabela de Detalhamento) para HE 100%, e indigo (cor padrão
+   de "total geral" do dashboard) para Horas Extras Totais. */
 .tgrade th.gt-tot.gtc-p{background:#1A56DB!important}
 .tgrade th.gt-tot.gtc-fj{background:#ED7D31!important}
 .tgrade th.gt-tot.gtc-fi{background:#ED0000!important}
 .tgrade th.gt-tot.gtc-flg{background:#000!important}
+.tgrade th.gt-tot.gtc-he5{background:#9900FF!important}
+.tgrade th.gt-tot.gtc-he1{background:#C0281C!important}
 .tgrade tr:nth-child(even) td.gt-tot{background:#E4EAF3}
 .tgrade tr:hover td.gt-tot{background:#DCE7F7!important}
 .tgrade td.gt-tot.gt-res{color:#fff!important;background:var(--indigo)!important}
@@ -473,6 +483,9 @@ table.tind td.pi-dia-vazio{color:var(--tx-muted);font-weight:400}
 .tgrade tr td.gt-tot.gtv-fj{background:#fff!important;color:#ED7D31!important}
 .tgrade tr td.gt-tot.gtv-fi{background:#fff!important;color:#ED0000!important}
 .tgrade tr td.gt-tot.gtv-flg{background:#fff!important;color:#000!important}
+.tgrade tr td.gt-tot.gtv-he5{background:#fff!important;color:#9900FF!important}
+.tgrade tr td.gt-tot.gtv-he1{background:#fff!important;color:#C0281C!important}
+.tgrade tr td.gt-tot.gtv-het{background:#fff!important;color:var(--indigo)!important}
 
 /* ── Formatação condicional: colunas de fim de semana (sáb/dom) ── */
 .tgrade th.th-weekend{background:#64748B}
@@ -742,6 +755,10 @@ img,svg{max-width:100%}
     <div class="sb-item" id="nav-he" data-target="sec-he">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="13" r="8"/><path d="M9 1h6M12 1v3"/></svg>
       <span class="sb-item-txt">Hora Extra</span>
+    </div>
+    <div class="sb-item" id="nav-graficos-he" data-target="sec-graficos-he">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-4"/></svg>
+      <span class="sb-item-txt">Gráficos de Horas Extras</span>
     </div>
   </nav>
   <div class="sb-toggle" id="sb-toggle-btn">
@@ -1178,7 +1195,6 @@ img,svg{max-width:100%}
         <div class="tbl-scroll" style="max-height:560px">
           <table class="tdet" id="he-det-table">
             <thead><tr>
-              <th class="tal">Data</th>
               <th class="tal">Colaborador</th>
               <th>Unidade</th>
               <th class="tal">Setor</th>
@@ -1190,6 +1206,26 @@ img,svg{max-width:100%}
             </tr></thead>
             <tbody id="he-det-body"></tbody>
           </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== GRÁFICOS DE HORAS EXTRAS ===== -->
+    <div id="sec-graficos-he" style="scroll-margin-top:130px">
+      <div class="sec-head"><span class="sec-title">Gráficos de Horas Extras · Gestão HE 50% &amp; 100%</span><div class="sec-line"></div></div>
+      <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);margin-bottom:16px">
+        <span style="font-size:11px;color:var(--tx-secondary)">Dados: Espelhos de Ponto EzPoint · Unidade, Mês, Turno, Setor e Cargo: barra superior · eixo secundário (linha) = média de horas extras por colaborador que realizou HE</span>
+      </div>
+      <div class="g2">
+        <div class="chart-card">
+          <div class="chart-head"><div class="chart-title">Horas Extras a 50% por Unidade</div><div class="chart-sub">Total de horas (barras) × média por colaborador (linha, eixo secundário)</div></div>
+          <div class="chart-divider"></div>
+          <div class="chart-body"><div class="ch"><canvas id="chart-he50-unidade"></canvas></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div class="chart-title">Horas Extras a 100% por Unidade</div><div class="chart-sub">Total de horas (barras) × média por colaborador (linha, eixo secundário)</div></div>
+          <div class="chart-divider"></div>
+          <div class="chart-body"><div class="ch"><canvas id="chart-he100-unidade"></canvas></div></div>
         </div>
       </div>
     </div>
@@ -1522,9 +1558,35 @@ const RES_ROWS = [
   {key:'P',      label:'Presença',              cls:'r-p'},
 ];
 
+/* Índice nome→colaborador dentro de HE_DETALHE_DADOS, por unidade — usado
+   para consolidar as 3 colunas de Horas Extras da Grade sem varrer o array
+   inteiro a cada linha. Mesma fonte (Espelhos de Ponto EzPoint) já usada na
+   tabela de Detalhamento e nos Gráficos de Horas Extras. */
+function buildHEIndex(){
+  const idx = {};
+  UNIDS.forEach(u=>{
+    idx[u] = {};
+    (HE_DETALHE_DADOS[u]||[]).forEach(emp=>{ idx[u][emp.nome] = emp; });
+  });
+  return idx;
+}
+function heMonthTotals(heIdx, unidade, nome, mnum){
+  const emp = heIdx[unidade] && heIdx[unidade][nome];
+  if(!emp) return {h5:0, h1:0};
+  let h5=0, h1=0;
+  Object.keys(emp.dias).forEach(iso=>{
+    if(parseInt(iso.slice(5,7),10) !== mnum) return;
+    const d = emp.dias[iso];
+    h5 += d.h5||0; h1 += d.h1||0;
+  });
+  return {h5, h1};
+}
+
 function renderGrade(){
   const groups = groupFiltered();
   const dateList = mesDateList(state.mes || MESES[0]);
+  const mnum = MES_NUM[state.mes || MESES[0]];
+  const heIdx = buildHEIndex();
   const gBodyF = document.getElementById('grade-body-frozen');
   const gBodyS = document.getElementById('grade-body');
   const headFEl = document.getElementById('grade-head-frozen');
@@ -1557,21 +1619,25 @@ function renderGrade(){
     return `<th class="${cls.trim()}" title="${geral?'Folga Geral':''}">${fmtDateShort(iso)}, ${weekdayShort(iso)}</th>`;
   }).join('');
   const headF = `<tr><th>Colaborador</th><th>Unidade</th><th>Setor</th><th>Turno</th></tr>`;
-  const headS = `<tr>${headDates}<th class="gt-tot gtc-p" title="Total de Presenças no Mês">Total Presenças</th><th class="gt-tot gtc-fj" title="Total de Faltas Justificadas no Mês">Total Faltas Just.</th><th class="gt-tot gtc-fi" title="Total de Faltas Injustificadas no Mês">Total Faltas Injust.</th><th class="gt-tot gtc-flg" title="Total de Folgas no Mês">Total Folgas</th></tr>`;
+  const headS = `<tr>${headDates}<th class="gt-tot gtc-p" title="Total de Presenças no Mês">Total de Presenças no Mês</th><th class="gt-tot gtc-fj" title="Total de Faltas Justificadas no Mês">Total de Faltas Justificadas no Mês</th><th class="gt-tot gtc-fi" title="Total de Faltas Injustificadas no Mês">Total de Faltas Injustificadas no Mês</th><th class="gt-tot gtc-flg" title="Total de Folgas no Mês">Total de Folgas no Mês</th><th class="gt-tot gtc-he5" title="Total de Horas Extras a 50% no Mês">Total de Horas Extras a 50% no Mês</th><th class="gt-tot gtc-he1" title="Total de Horas Extras a 100% no Mês">Total de Horas Extras a 100% no Mês</th><th class="gt-tot" title="Horas Extras Totais no Mês">Horas Extras Totais no Mês</th></tr>`;
 
   // table-layout:fixed exige largura explícita para todas as colunas do
   // painel rolável — senão as colunas de dias e de totais ficam espremidas
   // igualmente. Colgroup é reconstruído a cada render porque a quantidade de
   // colunas de dias varia por mês (28 a 31). O painel congelado (Colaborador/
   // Unidade/Setor/Turno) tem colgroup fixo, definido uma única vez no HTML.
+  // As 7 colunas de total (antigas 4 + novas 3 de Hora Extra) agora usam
+  // quebra de texto no cabeçalho, então cabem em colunas mais estreitas
+  // (90px) do que antes (110–135px sem quebra).
   if(colgroupEl){
     colgroupEl.innerHTML =
       `<col span="${dateList.length}" style="width:84px">` +
-      '<col style="width:120px"><col style="width:130px"><col style="width:135px"><col style="width:110px">';
+      '<col style="width:90px"><col style="width:90px"><col style="width:90px"><col style="width:90px">' +
+      '<col style="width:90px"><col style="width:90px"><col style="width:90px">';
   }
 
   let rowsF = '', rowsS = '';
-  const totalColsS = dateList.length + 4;
+  const totalColsS = dateList.length + 7;
 
   groups.forEach(g=>{
     const groupLabel = `${g.unidade} — ${g.turno}`;
@@ -1602,12 +1668,17 @@ function renderGrade(){
         rowTot += v;
         return `<td class="${rr.cls}">${v || ''}</td>`;
       }).join('');
+      // 3 colunas de Hora Extra não se aplicam às linhas de resumo por
+      // status (Feriado, Férias, Folga etc.) — só ao total por colaborador,
+      // mais abaixo — então ficam sempre como "—" aqui, igual às demais
+      // categorias que não batem com a linha atual.
+      const heBlank = '<td class="gt-tot">—</td><td class="gt-tot">—</td><td class="gt-tot">—</td>';
       let totCells;
-      if(rr.key==='P'){ totCells = `<td class="gt-tot${rowTot>0?' gtv-p':''}">${rowTot}</td><td class="gt-tot">—</td><td class="gt-tot">—</td><td class="gt-tot">—</td>`; }
-      else if(rr.key==='FJ'){ totCells = `<td class="gt-tot">—</td><td class="gt-tot${rowTot>0?' gtv-fj':''}">${rowTot}</td><td class="gt-tot">—</td><td class="gt-tot">—</td>`; }
-      else if(rr.key==='FI'){ totCells = `<td class="gt-tot">—</td><td class="gt-tot">—</td><td class="gt-tot${rowTot>0?' gtv-fi':''}">${rowTot}</td><td class="gt-tot">—</td>`; }
-      else if(rr.key==='FOLGA'){ totCells = `<td class="gt-tot">—</td><td class="gt-tot">—</td><td class="gt-tot">—</td><td class="gt-tot${rowTot>0?' gtv-flg':''}">${rowTot}</td>`; }
-      else totCells = `<td class="gt-tot">—</td><td class="gt-tot">—</td><td class="gt-tot">—</td><td class="gt-tot">—</td>`;
+      if(rr.key==='P'){ totCells = `<td class="gt-tot${rowTot>0?' gtv-p':''}">${rowTot}</td><td class="gt-tot">—</td><td class="gt-tot">—</td><td class="gt-tot">—</td>${heBlank}`; }
+      else if(rr.key==='FJ'){ totCells = `<td class="gt-tot">—</td><td class="gt-tot${rowTot>0?' gtv-fj':''}">${rowTot}</td><td class="gt-tot">—</td><td class="gt-tot">—</td>${heBlank}`; }
+      else if(rr.key==='FI'){ totCells = `<td class="gt-tot">—</td><td class="gt-tot">—</td><td class="gt-tot${rowTot>0?' gtv-fi':''}">${rowTot}</td><td class="gt-tot">—</td>${heBlank}`; }
+      else if(rr.key==='FOLGA'){ totCells = `<td class="gt-tot">—</td><td class="gt-tot">—</td><td class="gt-tot">—</td><td class="gt-tot${rowTot>0?' gtv-flg':''}">${rowTot}</td>${heBlank}`; }
+      else totCells = `<td class="gt-tot">—</td><td class="gt-tot">—</td><td class="gt-tot">—</td><td class="gt-tot">—</td>${heBlank}`;
       rowsF += `<tr class="tr-res"><td colspan="4" class="${rr.cls}" style="text-align:right;padding-right:8px">${rr.label}</td></tr>`;
       rowsS += `<tr class="tr-res">${cells}${totCells}</tr>`;
     });
@@ -1619,8 +1690,9 @@ function renderGrade(){
       const v = denom>0 ? pct1(pd.P/denom*100)+'%' : '';
       return `<td class="r-tx">${v}</td>`;
     }).join('');
+    const pctTotPlaceholders = Array(7).fill('<td class="gt-tot" style="background:var(--indigo)!important"></td>').join('');
     rowsF += `<tr class="tr-res"><td colspan="4" style="text-align:right;padding-right:8px;background:var(--indigo)!important;color:#fff!important">% de Presença</td></tr>`;
-    rowsS += `<tr class="tr-res">${pctCells}<td class="gt-tot" style="background:var(--indigo)!important"></td><td class="gt-tot" style="background:var(--indigo)!important"></td><td class="gt-tot" style="background:var(--indigo)!important"></td><td class="gt-tot" style="background:var(--indigo)!important"></td></tr>`;
+    rowsS += `<tr class="tr-res">${pctCells}${pctTotPlaceholders}</tr>`;
 
     g.colaboradores.forEach(c=>{
       let cP=0,cFJ=0,cFI=0,cFLG=0;
@@ -1656,13 +1728,21 @@ function renderGrade(){
         const title = heTxt ? `${meta.label} · ${heTxt}` : meta.label;
         return `<td class="${tdCls}" title="${title}"><span class="${cls}">${s}</span></td>`;
       }).join('');
+      // Colunas de Horas Extras (50%/100%/Total) — consolidadas a partir do
+      // Espelho de Ponto EzPoint (HE_DETALHE_DADOS), cruzando pelo nome do
+      // colaborador dentro da mesma unidade, no mês selecionado. Mesma fonte
+      // já usada na tabela "Detalhamento por Colaborador" e nos "Gráficos de
+      // Horas Extras" — cargo, turno e setor já vêm corretos pelo próprio
+      // agrupamento (g.unidade/g.turno/c.cargo) usado no resto da linha.
+      const heTot = heMonthTotals(heIdx, g.unidade, c.nome, mnum);
+      const heTotal = heTot.h5 + heTot.h1;
       rowsF += `<tr>
         <td title="${c.nome}">${truncName(c.nome,18)}</td>
         <td title="${g.unidade}">${g.unidade}</td>
         <td title="${c.cargo}">${c.cargo}</td>
         <td title="${g.turno}">${g.turno}</td>
       </tr>`;
-      rowsS += `<tr>${dayCells}<td class="gt-tot${cP>0?' gtv-p':''}">${cP}</td><td class="gt-tot${cFJ>0?' gtv-fj':''}">${cFJ||'—'}</td><td class="gt-tot${cFI>0?' gtv-fi':''}">${cFI||'—'}</td><td class="gt-tot${cFLG>0?' gtv-flg':''}">${cFLG||'—'}</td></tr>`;
+      rowsS += `<tr>${dayCells}<td class="gt-tot${cP>0?' gtv-p':''}">${cP}</td><td class="gt-tot${cFJ>0?' gtv-fj':''}">${cFJ||'—'}</td><td class="gt-tot${cFI>0?' gtv-fi':''}">${cFI||'—'}</td><td class="gt-tot${cFLG>0?' gtv-flg':''}">${cFLG||'—'}</td><td class="gt-tot${heTot.h5>0?' gtv-he5':''}">${heTot.h5>0?hoursToHHMM(heTot.h5):'—'}</td><td class="gt-tot${heTot.h1>0?' gtv-he1':''}">${heTot.h1>0?hoursToHHMM(heTot.h1):'—'}</td><td class="gt-tot${heTotal>0?' gtv-het':''}">${heTotal>0?hoursToHHMM(heTotal):'—'}</td></tr>`;
     });
   });
 
@@ -2104,6 +2184,23 @@ function optBarsH(maxX, suf){
   };
 }
 
+/* Opções para gráficos com EIXO SECUNDÁRIO (barras no eixo esquerdo "y" +
+   linha no eixo direito "y1") — mesma paleta/tipografia de optBars(), só
+   acrescentando a segunda escala. Usado nos gráficos de Gestão de Horas
+   Extras (total em barras × média por colaborador em linha). */
+function optBarsSec(y1Label){
+  return {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:true, position:'bottom', labels:{font:{size:11,family:'Inter'}, boxWidth:12, usePointStyle:true, color:'#4B5768'}},
+      tooltip:{bodyFont:{family:'Inter'}, callbacks:{label:ctx=>ctx.dataset.label+': '+hoursToHHMM(ctx.parsed.y)+'h'}} },
+    scales:{
+      x:{grid:{display:false}, ticks:{color:'#0F1B2D', font:{size:10.5,family:'Inter',weight:'600'}}},
+      y:{beginAtZero:true, position:'left', grid:{color:'#EEF1F5'}, ticks:{color:'#8FA8C4', font:{size:10}}, title:{display:true, text:'Total (h)', color:'#8FA8C4', font:{size:10.5,family:'Inter',weight:'600'}}},
+      y1:{beginAtZero:true, position:'right', grid:{display:false}, ticks:{color:'#8FA8C4', font:{size:10}}, title:{display:true, text: y1Label||'Média por colaborador (h)', color:'#8FA8C4', font:{size:10.5,family:'Inter',weight:'600'}}}
+    }
+  };
+}
+
 let charts = {};
 function destroyChart(id){ if(charts[id]){ charts[id].destroy(); delete charts[id]; } }
 
@@ -2481,7 +2578,6 @@ function renderHoraExtraDetalhe(mnum){
   const naTxt = '<span style="color:var(--tx-muted)">—</span>';
   document.getElementById('he-det-body').innerHTML = rows.map(r=>`
     <tr>
-      <td class="tal">${fmtDateShort(r.data)}</td>
       <td class="tal" style="font-weight:700">${r.nome}</td>
       <td class="tuni">${r.unidade.replace('GPA ','')}</td>
       <td class="tal">${r.setor || naTxt}</td>
@@ -2491,7 +2587,60 @@ function renderHoraExtraDetalhe(mnum){
       <td>${r.h1>0 ? `<span style="font-weight:800;color:var(--red)">${hoursToHHMM(r.h1)}</span>` : hoursToHHMM(0)}</td>
       <td style="font-weight:800;color:var(--indigo)">${hoursToHHMM(r.total)}</td>
     </tr>`).join('') ||
-    `<tr><td colspan="9" style="padding:20px;text-align:center;color:var(--tx-muted)">Nenhum registro de hora extra para os filtros selecionados</td></tr>`;
+    `<tr><td colspan="8" style="padding:20px;text-align:center;color:var(--tx-muted)">Nenhum registro de hora extra para os filtros selecionados</td></tr>`;
+}
+
+/* ===== Gráficos de Gestão de Horas Extras (HE 50% / HE 100%) =====
+   Mesmo critério de "por Unidade" já usado nos demais gráficos comparativos
+   do dashboard (statsByUnidade, c1/c2 etc.): sempre mostra as 3 unidades
+   lado a lado, respeitando Mês/Turno/Setor/Cargo da barra superior — a
+   comparação entre unidades é o propósito do gráfico, por isso o filtro de
+   Unidade não restringe as categorias do eixo X (mesmo padrão do gráfico
+   "% Presença por Unidade"). */
+function statsByUnidadeHE(mnum){
+  return UNIDS.map(u=>{
+    let totalH5=0, totalH1=0, nH5=0, nH1=0;
+    (HE_DETALHE_DADOS[u]||[]).forEach(emp=>{
+      if(state.turno && emp.turno!==state.turno) return;
+      if(state.cargo && emp.setor!==state.cargo) return;
+      if(state.funcao && emp.cargo!==state.funcao) return;
+      let empH5=0, empH1=0;
+      Object.keys(emp.dias).forEach(iso=>{
+        const mm = parseInt(iso.slice(5,7),10);
+        if(mm !== mnum) return;
+        const d = emp.dias[iso];
+        empH5 += d.h5||0; empH1 += d.h1||0;
+      });
+      if(empH5>0){ totalH5+=empH5; nH5++; }
+      if(empH1>0){ totalH1+=empH1; nH1++; }
+    });
+    return { unidade:u, totalH5, totalH1, avgH5: nH5? totalH5/nH5 : 0, avgH1: nH1? totalH1/nH1 : 0, nH5, nH1 };
+  });
+}
+function renderGraficosHE(){
+  const mnum = MES_NUM[state.mes||MESES[MESES.length-1]];
+  const st = statsByUnidadeHE(mnum);
+  const unidLabels = st.map(x=>x.unidade.replace('GPA ',''));
+
+  destroyChart('cHE50');
+  charts.cHE50 = new Chart(document.getElementById('chart-he50-unidade'), {
+    data:{ labels: unidLabels,
+      datasets:[
+        {type:'bar', label:'Total HE 50% (h)', data:st.map(x=>+x.totalH5.toFixed(2)), backgroundColor:C.blue, borderRadius:5, yAxisID:'y', order:1},
+        {type:'line', label:'Média HE 50% por colaborador (h)', data:st.map(x=>+x.avgH5.toFixed(2)), borderColor:C.green, backgroundColor:'transparent', borderWidth:1.5, pointRadius:3, pointBackgroundColor:C.green, yAxisID:'y1', order:0}
+      ]},
+    options: optBarsSec('Média HE 50% (h)')
+  });
+
+  destroyChart('cHE100');
+  charts.cHE100 = new Chart(document.getElementById('chart-he100-unidade'), {
+    data:{ labels: unidLabels,
+      datasets:[
+        {type:'bar', label:'Total HE 100% (h)', data:st.map(x=>+x.totalH1.toFixed(2)), backgroundColor:C.red, borderRadius:5, yAxisID:'y', order:1},
+        {type:'line', label:'Média HE 100% por colaborador (h)', data:st.map(x=>+x.avgH1.toFixed(2)), borderColor:C.green, backgroundColor:'transparent', borderWidth:1.5, pointRadius:3, pointBackgroundColor:C.green, yAxisID:'y1', order:0}
+      ]},
+    options: optBarsSec('Média HE 100% (h)')
+  });
 }
 
 function renderCharts(){
@@ -2836,6 +2985,7 @@ function renderAll(){
   renderRadarContratos();
   renderProdutividadeIndividual();
   renderHoraExtra();
+  renderGraficosHE();
 }
 
 function safeInit(fn, label){
