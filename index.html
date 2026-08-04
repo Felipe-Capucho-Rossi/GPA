@@ -20,7 +20,7 @@
   --amber:#B45309; --amber-bg:#FEF3C7;
   --red:#C0281C; --red-bg:#FEE2E0;
   --purple:#6B21A8;
-  --tx-primary:#0F1B2D; --tx-secondary:#4B5768; --tx-muted:#8FA8C4; --tx-white:#FFF;
+  --tx-primary:#0F1B2D; --tx-secondary:#4B5768; --tx-muted:#5C6B7E; --tx-white:#FFF;
   --font:'Inter',system-ui,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -1379,7 +1379,7 @@ const MES_NUM = {Janeiro:1,Fevereiro:2,Março:3,Abril:4,Maio:5,Junho:6,Julho:7,A
 const ANO = 2026;
 
 /* ===== Paleta / helpers de cor (idênticos ao dashboard Bimbo) ===== */
-const C = {blue:'#0079C2', indigo:'#1E3A6E', green:'#0E7A43', amber:'#B45309', red:'#C0281C', purple:'#6B21A8', gray:'#8FA8C4'};
+const C = {blue:'#0079C2', indigo:'#1E3A6E', green:'#0E7A43', amber:'#B45309', red:'#C0281C', purple:'#6B21A8', gray:'#5C6B7E'};
 const CT = {'1º Turno':'#0F1B2D','2º Turno':'#0079C2','3º Turno':'#2D5099','4º Turno':'#6B21A8'};
 const CU = {'GPA CD1':'#1E3A6E','GPA CD2':'#0079C2','GPA CD4':'#6B21A8'};
 function barCor(t){ return t>=90 ? C.blue : t>=70 ? C.amber : C.red; }
@@ -1903,9 +1903,9 @@ const OPERACIONAL_MES_DISPONIVEL = 'Julho';
    diferente do que foi filtrado). Mensagem principal fixa, conforme
    pedido; a linha menor abaixo dá o motivo específico. */
 function noDataBlock(motivo){
-  return `<div style="grid-column:1/-1;padding:28px 16px;text-align:center;background:var(--card);border:1px solid var(--border-light);border-radius:8px">
-    <div style="font-weight:700;color:var(--tx-secondary);font-size:13.5px;margin-bottom:4px">Dados não disponíveis para esse filtro</div>
-    <div style="font-size:11.5px;color:var(--tx-muted)">${motivo}</div>
+  return `<div style="grid-column:1/-1;padding:28px 16px;text-align:center;background:var(--card);border:1px solid #F3D3D0;border-radius:8px">
+    <div style="font-weight:700;color:var(--red);font-size:13.5px;margin-bottom:4px">Dados não disponíveis para esse filtro</div>
+    <div style="font-size:11.5px;color:var(--tx-secondary)">${motivo}</div>
   </div>`;
 }
 function renderOperacional(){
@@ -2402,7 +2402,7 @@ function optBars(maxY, suf){
     plugins:{ legend:{display:true, position:'bottom', labels:{font:{size:11,family:'Inter'}, boxWidth:12, usePointStyle:true, color:'#4B5768'}},
       tooltip:{bodyFont:{family:'Inter'}, callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y+(suf||'')}} },
     scales:{ x:{grid:{display:false}, ticks:{color:'#0F1B2D', font:{size:10.5,family:'Inter',weight:'600'}}},
-      y:{beginAtZero:true, max:maxY, grid:{color:'#EEF1F5'}, ticks:{color:'#8FA8C4', font:{size:10}}} }
+      y:{beginAtZero:true, max:maxY, grid:{color:'#EEF1F5'}, ticks:{color:'#5C6B7E', font:{size:10}}} }
   };
 }
 function mkMed(labels, val, label){
@@ -2417,7 +2417,7 @@ function optBarsH(maxX, suf){
     plugins:{ legend:{display:false},
       tooltip:{bodyFont:{family:'Inter'}, callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.x+(suf||'')}} },
     scales:{
-      x:{beginAtZero:true, max:maxX, grid:{color:'#EEF1F5'}, ticks:{color:'#8FA8C4', font:{size:10}}},
+      x:{beginAtZero:true, max:maxX, grid:{color:'#EEF1F5'}, ticks:{color:'#5C6B7E', font:{size:10}}},
       y:{grid:{display:false}, ticks:{color:'#0F1B2D', font:{size:10.5,family:'Inter',weight:'600'}}}
     }
   };
@@ -2446,7 +2446,7 @@ function optBarsStacked(){
       } } },
     scales:{
       x:{stacked:true, grid:{display:false}, ticks:{color:'#0F1B2D', font:{size:10.5,family:'Inter',weight:'600'}}},
-      y:{stacked:true, beginAtZero:true, grid:{color:'#EEF1F5'}, ticks:{color:'#8FA8C4', font:{size:10}}}
+      y:{stacked:true, beginAtZero:true, grid:{color:'#EEF1F5'}, ticks:{color:'#5C6B7E', font:{size:10}}}
     }
   };
 }
@@ -2467,7 +2467,7 @@ function optBarsHStacked(){
         footer:items=>'Total: '+hoursToHHMM(items.reduce((a,i)=>a+i.parsed.x,0))+'h'
       } } },
     scales:{
-      x:{stacked:true, beginAtZero:true, grid:{color:'#EEF1F5'}, ticks:{color:'#8FA8C4', font:{size:10}}},
+      x:{stacked:true, beginAtZero:true, grid:{color:'#EEF1F5'}, ticks:{color:'#5C6B7E', font:{size:10}}},
       y:{stacked:true, grid:{display:false}, ticks:{color:'#0F1B2D', font:{size:10.5,family:'Inter',weight:'600'}}}
     }
   };
@@ -2480,7 +2480,7 @@ function optLineTrend(){
       tooltip:{bodyFont:{family:'Inter'}, callbacks:{label:ctx=>ctx.dataset.label+': '+hoursToHHMM(ctx.parsed.y)+'h'}} },
     scales:{
       x:{grid:{display:false}, ticks:{color:'#0F1B2D', font:{size:10.5,family:'Inter',weight:'600'}}},
-      y:{beginAtZero:true, grid:{color:'#EEF1F5'}, ticks:{color:'#8FA8C4', font:{size:10}}}
+      y:{beginAtZero:true, grid:{color:'#EEF1F5'}, ticks:{color:'#5C6B7E', font:{size:10}}}
     }
   };
 }
@@ -3369,9 +3369,9 @@ function renderResumo(){
       <td><span class="${bdgCls(t.pctPresenca)}">${pct1(t.pctPresenca)}%</span></td>
       <td style="font-weight:700;color:${(100-t.pctPresenca)>=14?'#C0281C':(100-t.pctPresenca)>=8?'#B45309':'#0079C2'}">${pct1(100-t.pctPresenca)}%</td>
       <td style="font-weight:700;color:#0079C2">${fmt(t.P)}</td>
-      <td style="color:${t.FJ>0?'#B45309':'#8FA8C4'}">${t.FJ||'—'}</td>
-      <td style="color:${t.FI>0?'#C0281C':'#8FA8C4'}">${t.FI||'—'}</td>
-      <td style="color:${faltas>0?'#C0281C':'#8FA8C4'}">${faltas||'—'}</td>
+      <td style="color:${t.FJ>0?'#B45309':'#5C6B7E'}">${t.FJ||'—'}</td>
+      <td style="color:${t.FI>0?'#C0281C':'#5C6B7E'}">${t.FI||'—'}</td>
+      <td style="color:${faltas>0?'#C0281C':'#5C6B7E'}">${faltas||'—'}</td>
       <td class="${stCls(t.pctPresenca)}">${stTxt(t.pctPresenca)}</td>
     </tr>`);
   });
