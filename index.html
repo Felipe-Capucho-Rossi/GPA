@@ -801,10 +801,6 @@ img,svg{max-width:100%}
 
       <div class="dim-kpi-row" id="pi-kpi-row"></div>
 
-      <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:4px">
-        <div class="fg"><label>Unidade</label><select id="pi-unidade"></select></div>
-      </div>
-
       <div class="tbl-card" style="margin-bottom:16px">
         <div class="tbl-head">
           <h3>Distribuição de Colaboradores por Faixa de Aderência à Meta</h3>
@@ -831,7 +827,7 @@ img,svg{max-width:100%}
         </div>
         <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
           <div class="fg"><label>Buscar Colaborador</label><input type="text" id="pi-busca" placeholder="Nome..."></div>
-          <div class="fg"><label>Turno</label><select id="pi-turno-det"></select></div>
+          <span style="font-size:11px;color:var(--tx-muted);padding-bottom:7px">Unidade e Turno: barra superior</span>
           <div style="margin-left:auto;font-size:11px;color:var(--tx-muted);font-weight:600;padding-bottom:7px" id="pi-det-count"></div>
         </div>
         <div class="tbl-scroll" style="max-height:560px">
@@ -857,8 +853,8 @@ img,svg{max-width:100%}
       </div>
 
       <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:4px">
-        <div class="fg"><label>Unidade</label><select id="dim-unidade"></select></div>
         <div class="fg"><label>Setor</label><select id="dim-cargo"></select></div>
+        <div style="font-size:11px;color:var(--tx-muted);padding-bottom:7px">Unidade e demais filtros: barra superior</div>
       </div>
 
       <div class="dim-cards-grid op-cards-grid" id="dim-cards"></div>
@@ -1060,8 +1056,7 @@ img,svg{max-width:100%}
       </div>
 
       <div class="pres-filtros">
-        <div class="fg"><label>Unidade</label><select id="mov-unidade"></select></div>
-        <div class="fg"><label>Mês</label><select id="mov-mes"></select></div>
+        <span style="font-size:11px;color:var(--tx-muted)">Filtrado por Unidade e Mês da barra superior</span>
       </div>
 
       <div class="pres-sec-lbl">Movimentações · Admissões e Desligamentos <span id="mov-count"></span></div>
@@ -1106,8 +1101,8 @@ img,svg{max-width:100%}
       <div class="dim-kpi-row" id="ctr-kpi-row"></div>
 
       <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:4px">
-        <div class="fg"><label>Unidade</label><select id="ctr-unidade"></select></div>
         <div class="fg"><label>Situação</label><select id="ctr-status"></select></div>
+        <div style="font-size:11px;color:var(--tx-muted);padding-bottom:7px">Unidade: barra superior</div>
       </div>
 
       <div class="tbl-card">
@@ -1136,7 +1131,7 @@ img,svg{max-width:100%}
       <div class="dim-kpi-row" id="he-kpi-row"></div>
 
       <div style="padding:9px 16px;background:#F8FAFC;border-bottom:1px solid var(--border-light);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:4px">
-        <div class="fg"><label>Mês</label><select id="he-mes"></select></div>
+        <span style="font-size:11px;color:var(--tx-muted)">Filtrado por Unidade e Mês da barra superior</span>
       </div>
 
       <div class="tbl-card">
@@ -1685,9 +1680,13 @@ function dimRowColor(pct){
 
 function pct1safe(n){ return isFinite(n) ? pct1(n) : '0,0'; }
 function renderOperacional(){
-  const unidades = PRODUCAO_DADOS.map(p=>p.unidade);
-  const totReal = PRODUCAO_DADOS.reduce((a,p)=>a+p.real,0);
-  const totMeta = PRODUCAO_DADOS.reduce((a,p)=>a+p.meta,0);
+  // Integrado ao filtro global de Unidade (topbar): quando uma unidade está
+  // selecionada, tanto os KPIs agregados quanto os cards abaixo mostram
+  // apenas essa unidade — nada da(s) outra(s) fica visível.
+  const producaoScope = PRODUCAO_DADOS.filter(p=> !state.unidade || p.unidade===state.unidade);
+  const unidades = producaoScope.map(p=>p.unidade);
+  const totReal = producaoScope.reduce((a,p)=>a+p.real,0);
+  const totMeta = producaoScope.reduce((a,p)=>a+p.meta,0);
   const totPct = totMeta>0 ? totReal/totMeta*100 : 0;
   const totAtestado = unidades.reduce((a,u)=>a+OPERACIONAL_DADOS[u].absenteismo.atestado,0);
   const totFalta = unidades.reduce((a,u)=>a+OPERACIONAL_DADOS[u].absenteismo.falta,0);
@@ -1695,16 +1694,17 @@ function renderOperacional(){
   const absDenom = totPresenca+totFalta+totAtestado;
   const absPctGeral = absDenom>0 ? (totFalta+totAtestado)/absDenom*100 : 0;
   const mediaGlobalPonderada = unidades.length ? Math.round(unidades.reduce((a,u)=>a+MEDIA_CAIXA_HD[u],0)/unidades.length) : 0;
+  const escopoTxt = state.unidade ? state.unidade.replace('GPA ','') : '3 unidades';
 
   document.getElementById('op-kpi-row').innerHTML = [
-    {lbl:'Produção Real (caixas)', val:fmt(totReal), sub:'Acumulado no mês · 3 unidades', cls:'k-indigo'},
+    {lbl:'Produção Real (caixas)', val:fmt(totReal), sub:'Acumulado no mês · '+escopoTxt, cls:'k-indigo'},
     {lbl:'Meta de Produção', val:fmt(totMeta), sub:'Caixas planejadas no mês', cls:''},
     {lbl:'% Meta Atingida', val:pct1safe(totPct)+'%', sub: totPct>=100?'Meta batida':'Abaixo da meta', cls: totPct>=100?'k-green':totPct>=70?'k-amber':'k-red'},
-    {lbl:'Média Caixa H/D', val:fmt(mediaGlobalPonderada), sub:'Média simples entre unidades', cls:'k-blue'},
+    {lbl:'Média Caixa H/D', val:fmt(mediaGlobalPonderada), sub: state.unidade?'Unidade selecionada':'Média simples entre unidades', cls:'k-blue'},
     {lbl:'Absenteísmo Geral', val:pct1safe(absPctGeral)+'%', sub:`${fmt(totFalta)} faltas · ${fmt(totAtestado)} atestados`, cls: absPctGeral<=15?'k-green':absPctGeral<=25?'k-amber':'k-red'},
   ].map(k=>`<div class="kpi ${k.cls}"><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
 
-  const cardsHtml = PRODUCAO_DADOS.map(p=>{
+  const cardsHtml = producaoScope.map(p=>{
     const und = p.unidade;
     const op = OPERACIONAL_DADOS[und] || {turnos:[], absenteismo:{atestado:0,falta:0,presenca:0,pct:0}};
     const pctReal = p.meta>0 ? p.real/p.meta*100 : 0;
@@ -1886,16 +1886,17 @@ function cfClass(val, t){
 }
 
 function renderDimensionamento(){
-  const selU = document.getElementById('dim-unidade');
+  // Unidade agora vem do filtro global do topbar (state.unidade) — só o
+  // Setor continua como filtro próprio desta seção, pois DIM_DADOS.cargo
+  // usa uma categorização de setor diferente da usada no filtro global de
+  // Cargo (que é sobre o cargo/função real do colaborador na presença).
   const selC = document.getElementById('dim-cargo');
-  if(!selU.dataset.init){
-    populateSelect(selU, UNIDS, 'Todas');
+  if(!selC.dataset.init){
     populateSelect(selC, Array.from(new Set(DIM_DADOS.map(d=>d.cargo))).sort(), 'Todos');
-    selU.dataset.init='1'; selC.dataset.init='1';
-    selU.addEventListener('change', renderDimensionamento);
+    selC.dataset.init='1';
     selC.addEventListener('change', renderDimensionamento);
   }
-  const fu = selU.value, fc = selC.value;
+  const fu = state.unidade, fc = selC.value;
   const dados = DIM_DADOS.filter(d=> (!fu||d.unidade===fu) && (!fc||d.cargo===fc) );
 
   // KPIs
@@ -2121,34 +2122,37 @@ function ctrStatusInfo(dias){
   return {label:'Regular', cls:'dim-gap-ok', chipCls:'dim-pct-exc', order:4};
 }
 function renderRadarContratos(){
-  const selU = document.getElementById('ctr-unidade');
+  // Unidade vem do filtro global (state.unidade). Situação continua local,
+  // pois é uma dimensão exclusiva desta seção (não existe no topbar).
   const selS = document.getElementById('ctr-status');
-  if(!selU.dataset.init){
-    populateSelect(selU, UNIDS, 'Todas');
+  if(!selS.dataset.init){
     const statusLabels = ['Vencido','Crítico ≤15d','Atenção ≤30d','Monitorar ≤60d','Regular'];
     populateSelect(selS, statusLabels, 'Todas');
-    selU.dataset.init='1'; selS.dataset.init='1';
-    selU.addEventListener('change', renderRadarContratos);
+    selS.dataset.init='1';
     selS.addEventListener('change', renderRadarContratos);
   }
-  const fu = selU.value, fs = selS.value;
+  const fu = state.unidade, fs = selS.value;
 
-  const total = RH_DADOS.length;
-  const vencidos = RH_DADOS.filter(d=>d.dias<0).length;
-  const criticos = RH_DADOS.filter(d=>d.dias>=0 && d.dias<=15).length;
-  const atencao = RH_DADOS.filter(d=>d.dias>15 && d.dias<=30).length;
-  const monitorar = RH_DADOS.filter(d=>d.dias>30 && d.dias<=60).length;
+  // Os KPIs do topo agora respeitam os MESMOS filtros da tabela abaixo
+  // (antes somavam RH_DADOS inteiro, sem nenhum filtro aplicado — por isso
+  // pareciam "travados" mesmo com a tabela já filtrada corretamente).
+  const escopo = RH_DADOS.filter(d=> !fu || d.unidade===fu);
+  const total = escopo.length;
+  const vencidos = escopo.filter(d=>d.dias<0).length;
+  const criticos = escopo.filter(d=>d.dias>=0 && d.dias<=15).length;
+  const atencao = escopo.filter(d=>d.dias>15 && d.dias<=30).length;
+  const monitorar = escopo.filter(d=>d.dias>30 && d.dias<=60).length;
+  const escopoTxt = fu ? fu.replace('GPA ','') : '3 unidades operacionais';
 
   document.getElementById('ctr-kpi-row').innerHTML = [
-    {lbl:'Contratos Temporários', val:total, sub:'3 unidades operacionais', cls:'k-indigo'},
+    {lbl:'Contratos Temporários', val:total, sub:escopoTxt, cls:'k-indigo'},
     {lbl:'Já Vencidos', val:vencidos, sub:'Ação imediata / regularização', cls: vencidos>0?'k-red':'k-green'},
     {lbl:'Vencendo em até 15 dias', val:criticos, sub:'Decisão urgente de renovação', cls: criticos>0?'k-red':'k-green'},
     {lbl:'Vencendo em 16-30 dias', val:atencao, sub:'Planejar renovação/efetivação', cls:'k-amber'},
     {lbl:'Vencendo em 31-60 dias', val:monitorar, sub:'Acompanhamento preventivo', cls:'k-blue'},
   ].map(k=>`<div class="kpi ${k.cls}"><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
 
-  let rows = RH_DADOS.filter(d=> !fu || d.unidade===fu );
-  rows = rows.map(d=>({...d, st: ctrStatusInfo(d.dias)}));
+  let rows = escopo.map(d=>({...d, st: ctrStatusInfo(d.dias)}));
   if(fs) rows = rows.filter(d=>d.st.label===fs);
   rows.sort((a,b)=>a.dias-b.dias);
 
@@ -2165,13 +2169,8 @@ function renderRadarContratos(){
 function piPct(str){ return parseInt(str.split('|')[1],10); }
 function piName(str){ return str.split('|')[0]; }
 function renderProdutividadeIndividual(){
-  const selU = document.getElementById('pi-unidade');
-  if(!selU.dataset.init){
-    populateSelect(selU, UNIDS, 'Todas');
-    selU.dataset.init='1';
-    selU.addEventListener('change', renderProdutividadeIndividual);
-  }
-  const fu = selU.value;
+  // Unidade vem do filtro global do topbar (state.unidade).
+  const fu = state.unidade;
   const unidsList = fu ? [fu] : UNIDS;
 
   let n=0, lt50=0, b50_80=0, b80_100=0, b100_120=0, gt120=0;
@@ -2234,10 +2233,13 @@ function renderProdutividadeIndividual(){
 /* ---- Detalhamento por colaborador (cópia fiel da aba "Produção" de cada
    planilha): uma linha por colaborador, com meta diária/acumulada, %
    atingimento, média, acumulado e o apontamento de cada um dos 31 dias do
-   mês. Reaproveita o filtro de unidade da seção (pi-unidade) e soma um
-   filtro de turno + busca por nome, próprios dessa tabela — necessários
+   mês. Unidade e Turno vêm do filtro global do topbar; a busca por nome
+   continua própria desta tabela (sem equivalente global) — necessária
    porque o volume de linhas é grande (quase 300 colaboradores em algumas
-   unidades) para navegação só por scroll. ---- */
+   unidades) para navegação só por scroll.
+   O campo "turno" na aba Produção é um dígito solto ("1","2","3"), diferente
+   do rótulo do filtro global de Turno ("1º Turno") — turnoDigito() extrai
+   esse dígito para comparar os dois. */
 function prodIndStatusChip(admissao){
   if(!admissao) return '<span style="color:var(--tx-muted)">—</span>';
   if(/^\d{2}\/\d{2}\/\d{4}$/.test(admissao)) return admissao;
@@ -2246,23 +2248,17 @@ function prodIndStatusChip(admissao){
   return `<span class="pi-status-chip ${cls}">${admissao}</span>`;
 }
 function prodIndDiaHead(iso){ return iso.slice(8,10)+'/'+iso.slice(5,7); }
+function turnoDigito(turnoLabel){ const m = (turnoLabel||'').match(/\d+/); return m ? m[0] : ''; }
 function renderProdIndDetalhe(fu){
-  const selT = document.getElementById('pi-turno-det');
   const buscaEl = document.getElementById('pi-busca');
-  if(!selT.dataset.init){
-    selT.innerHTML = '<option value="">Todos os turnos</option>' +
-      ['1','2','3'].map(t=>`<option value="${t}">${t}º Turno</option>`).join('');
-    selT.dataset.init='1';
-    selT.addEventListener('change', ()=>renderProdIndDetalhe(document.getElementById('pi-unidade').value));
-  }
   if(!buscaEl.dataset.init){
     buscaEl.dataset.init='1';
     buscaEl.addEventListener('input', ()=>{
       clearTimeout(window.__piBuscaTimer);
-      window.__piBuscaTimer = setTimeout(()=>renderProdIndDetalhe(document.getElementById('pi-unidade').value), 180);
+      window.__piBuscaTimer = setTimeout(()=>renderProdIndDetalhe(state.unidade), 180);
     });
   }
-  const ft = selT.value;
+  const ft = turnoDigito(state.turno);
   const busca = (buscaEl.value||'').trim().toUpperCase();
   const unidsList = fu ? [fu] : UNIDS;
 
@@ -2317,22 +2313,19 @@ function heHHMMtoHours(str){
   return (parseInt(p[0],10)||0) + (parseInt(p[1],10)||0)/60;
 }
 function renderHoraExtra(){
-  const selM = document.getElementById('he-mes');
-  if(!selM.dataset.init){
-    selM.innerHTML = MESES.map(m=>`<option value="${m}">${m}</option>`).join('');
-    selM.value = state.mes || MESES[MESES.length-1];
-    selM.dataset.init='1';
-    selM.addEventListener('change', renderHoraExtra);
-  }
-  const mes = selM.value || MESES[MESES.length-1];
+  // Mês e Unidade agora vêm inteiramente do filtro global do topbar — antes
+  // esta seção não tinha NENHUM filtro de unidade (sempre somava as 3 juntas)
+  // e usava um seletor de mês próprio, desconectado do restante do dashboard.
+  const mes = state.mes || MESES[MESES.length-1];
   const mnum = MES_NUM[mes];
+  const unidsList = state.unidade ? [state.unidade] : UNIDS;
 
   const porUnidade = {};
-  UNIDS.forEach(u=> porUnidade[u] = {ex:0, en:0, colabsSet:new Set()});
+  unidsList.forEach(u=> porUnidade[u] = {ex:0, en:0, colabsSet:new Set()});
 
   DADOS.forEach(g=>{
     const u = g.unidade;
-    if(!porUnidade[u]) porUnidade[u] = {ex:0, en:0, colabsSet:new Set()};
+    if(!porUnidade[u]) return; // fora do escopo de unidade selecionado
     (g.colaboradores||[]).forEach(c=>{
       if(!c.he) return;
       let teve = false;
@@ -2347,7 +2340,7 @@ function renderHoraExtra(){
     });
   });
 
-  const rows = UNIDS.map(u=>{
+  const rows = unidsList.map(u=>{
     const d = porUnidade[u] || {ex:0,en:0,colabsSet:new Set()};
     const total = d.ex + d.en;
     const nColabs = d.colabsSet.size;
@@ -2359,9 +2352,10 @@ function renderHoraExtra(){
   const colabsGeral = rows.reduce((a,r)=>a+r.nColabs,0);
   const mediaGeral = colabsGeral>0 ? totalGeral/colabsGeral : 0;
   const piorUnidade = rows[0] ? rows[0].unidade.replace('GPA ','') : '-';
+  const escopoTxt = state.unidade ? state.unidade.replace('GPA ','') : '3 unidades';
 
   document.getElementById('he-kpi-row').innerHTML = [
-    {lbl:'Total de Horas Extras', val:Math.round(totalGeral)+'h', sub:mes+'/2026 · 3 unidades', cls:'k-indigo'},
+    {lbl:'Total de Horas Extras', val:Math.round(totalGeral)+'h', sub:mes+'/2026 · '+escopoTxt, cls:'k-indigo'},
     {lbl:'Colaboradores com HE', val:colabsGeral, sub:'Registraram hora extra no mês', cls:'k-amber'},
     {lbl:'Média por Colaborador', val:mediaGeral.toFixed(1)+'h', sub:'Entre os que tiveram HE', cls:'k-blue'},
     {lbl:'Unidade com Maior Volume', val:piorUnidade, sub:'Maior custo de HE no mês', cls:'k-red'},
@@ -2566,17 +2560,12 @@ function initEvoTabs(){
 
 /* ===== Presença Diária / Movimentações ===== */
 function renderMovimentacoes(){
-  const selU = document.getElementById('mov-unidade');
-  const selM = document.getElementById('mov-mes');
-  if(!selU.dataset.init){
-    populateSelect(selU, UNIDS, 'Todas');
-    populateSelect(selM, MESES, 'Todos');
-    selU.dataset.init='1'; selM.dataset.init='1';
-    selU.addEventListener('change', renderMovimentacoes);
-    selM.addEventListener('change', renderMovimentacoes);
-  }
-  const fu = selU.value;
-  const fm = selM.value;
+  // Unidade e Mês agora vêm 100% do filtro global do topbar — sem selects
+  // próprios aqui, para não haver dois controles diferentes disputando a
+  // mesma dimensão (era exatamente essa duplicação que fazia esta seção
+  // "não mudar" quando o filtro do topo era usado).
+  const fu = state.unidade;
+  const fm = state.mes;
   function mesNomeDe(iso){ return Object.keys(MES_NUM).find(k=>MES_NUM[k]===parseInt(iso.split('-')[1],10)) || ''; }
   let evts = PRESENCA_DADOS.filter(p=> (!fu || p.unidade===fu) && (!fm || mesNomeDe(p.data)===fm) );
   evts = evts.slice().sort((a,b)=> a.data<b.data? -1:1);
@@ -2667,13 +2656,15 @@ function renderResumo(){
   document.getElementById('resumo-body').innerHTML = rows.join('') || '<tr><td colspan="10" style="text-align:center;color:var(--tx-muted);">Sem dados</td></tr>';
 }
 
-/* ===== Sidebar / navegação / mobile (idêntico Bimbo) ===== */
-const NAV_IDS = ['nav-operacional','nav-produtividade','nav-dimensionamento','nav-kpi','nav-grade','nav-graficos','nav-evolucao','nav-presenca','nav-resumo'];
-function navTo(sectionId, navIdx){
+/* ===== Sidebar / navegação / mobile (idêntico Bimbo) =====
+   O destaque do item ativo é resolvido comparando data-target de cada item
+   com a seção alvo — não por índice numérico numa lista paralela (esse
+   índice ficava desatualizado toda vez que a ordem dos itens no HTML mudava,
+   e os 3 últimos itens do menu nunca ficavam destacados). */
+function navTo(sectionId){
   closeMobileNav();
-  NAV_IDS.forEach((id,i)=>{
-    const el = document.getElementById(id);
-    if(el) el.classList.toggle('active', i===navIdx);
+  document.querySelectorAll('.sb-item[data-target]').forEach(el=>{
+    el.classList.toggle('active', el.dataset.target===sectionId);
   });
   const target = document.getElementById(sectionId);
   if(target){
@@ -2684,8 +2675,8 @@ function navTo(sectionId, navIdx){
   }
 }
 function initSidebarNav(){
-  document.querySelectorAll('.sb-item[data-target]').forEach((item, idx)=>{
-    item.addEventListener('click', ()=> navTo(item.dataset.target, idx));
+  document.querySelectorAll('.sb-item[data-target]').forEach(item=>{
+    item.addEventListener('click', ()=> navTo(item.dataset.target));
   });
 }
 let sbCol = false;
