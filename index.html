@@ -66,10 +66,22 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx-primary);font-s
   transition:margin-left .25s cubic-bezier(.4,0,.2,1);min-width:0;min-height:100vh}
 .main.exp{margin-left:var(--sidebar-w-col)}
 
+/* ── CABEÇALHO FIXO (topbar + barra de filtros) ──
+   Os dois ficam dentro de um único wrapper "sticky" (em vez de cada um
+   sticky separadamente) para que, ao rolar qualquer seção do dashboard OU
+   navegar pela sidebar (que também rola a página até a seção), tanto o
+   título quanto os FILTROS selecionados (Unidade/Mês/Turno/Setor/Cargo)
+   continuem visíveis no topo — o usuário sempre vê quais filtros estão
+   ativos e os dados filtrados correspondentes, sem precisar rolar de volta.
+   Um wrapper único também evita ter que calcular a altura exata do topbar
+   (que varia no mobile, onde vira height:auto) para posicionar a barra de
+   filtros logo abaixo dele. */
+.sticky-header{position:sticky;top:0;z-index:50;background:var(--card);flex-shrink:0}
+
 /* ── TOPBAR ── */
 .topbar{height:var(--topbar-h);background:var(--card);border-bottom:1px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;padding:0 24px;
-  position:sticky;top:0;z-index:50;gap:16px;flex-shrink:0}
+  gap:16px}
 .tb-title{font-size:15px;font-weight:700;color:var(--tx-primary)}
 .tb-badge{font-size:11px;font-weight:600;background:var(--blue-light);color:var(--blue);
   padding:3px 10px;border-radius:20px;white-space:nowrap}
@@ -77,7 +89,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx-primary);font-s
 /* ── FILTROS ── */
 .filter-bar{background:var(--card);border-bottom:1px solid var(--border);
   padding:10px 24px;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;
-  box-shadow:0 1px 4px rgba(15,27,45,.04);flex-shrink:0}
+  box-shadow:0 1px 4px rgba(15,27,45,.04)}
 .fg{display:flex;flex-direction:column;gap:3px}
 .fg label{font-size:10px;font-weight:700;color:var(--tx-secondary);text-transform:uppercase;letter-spacing:.5px}
 .fg select{border:1.5px solid var(--border);border-radius:6px;padding:7px 30px 7px 11px;
@@ -776,25 +788,27 @@ img,svg{max-width:100%}
 <!-- MAIN -->
 <div class="main" id="main">
 
-  <div class="topbar">
-    <div style="display:flex;align-items:center;gap:12px">
-      <button class="mb-toggle" id="mb-toggle" aria-label="Abrir menu">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      </button>
-      <span class="tb-title">Dashboard de Indicadores de Desempenho</span>
-      <span class="tb-badge">GPA · Julho 2026</span>
+  <div class="sticky-header">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="mb-toggle" id="mb-toggle" aria-label="Abrir menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <span class="tb-title">Dashboard de Indicadores de Desempenho</span>
+        <span class="tb-badge">GPA · Julho 2026</span>
+      </div>
+      <span style="font-size:11px;color:var(--tx-muted)" class="tb-sub">3 Unidades · CD1, CD2, CD4 · Controle de Presença e Produção</span>
     </div>
-    <span style="font-size:11px;color:var(--tx-muted)" class="tb-sub">3 Unidades · CD1, CD2, CD4 · Controle de Presença e Produção</span>
-  </div>
 
-  <div class="filter-bar">
-    <div class="fg"><label>Unidade</label><select class="f-unidade" id="f-uni"></select></div>
-    <div class="fg"><label>Mês</label><select class="f-mes" id="f-mes"></select></div>
-    <div class="fg"><label>Turno</label><select class="f-turno" id="f-turno"></select></div>
-    <div class="fg"><label>Setor</label><select class="f-cargo" id="f-cargo"></select></div>
-    <div class="fg"><label>Cargo</label><select class="f-funcao" id="f-funcao"></select></div>
-    <button class="btn-clear">✕ Limpar</button>
-    <span class="fcount" id="fcount"></span>
+    <div class="filter-bar">
+      <div class="fg"><label>Unidade</label><select class="f-unidade" id="f-uni"></select></div>
+      <div class="fg"><label>Mês</label><select class="f-mes" id="f-mes"></select></div>
+      <div class="fg"><label>Turno</label><select class="f-turno" id="f-turno"></select></div>
+      <div class="fg"><label>Setor</label><select class="f-cargo" id="f-cargo"></select></div>
+      <div class="fg"><label>Cargo</label><select class="f-funcao" id="f-funcao"></select></div>
+      <button class="btn-clear">✕ Limpar</button>
+      <span class="fcount" id="fcount"></span>
+    </div>
   </div>
 
   <div class="content">
